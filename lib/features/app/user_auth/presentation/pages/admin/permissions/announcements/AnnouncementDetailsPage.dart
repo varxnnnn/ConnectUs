@@ -17,6 +17,8 @@ class AnnouncementDetailsPage extends StatelessWidget {
     final String adminBranch = announcementData['adminBranch'] ?? 'Unknown Branch';
     final String adminRollNumber = announcementData['adminRollNumber'] ?? 'Unknown Roll Number';
     final String adminProfilePic = announcementData['adminProfilePic'] ?? '';
+    final String clubId = announcementData['clubId'] ?? 'Unknown Club ID'; // Set default value if not provided
+
 
     final String clubName = announcementData['clubName'] ?? 'Unknown Club';
     final String clubAim = announcementData['clubAim'] ?? 'Unknown Aim';
@@ -25,107 +27,89 @@ class AnnouncementDetailsPage extends StatelessWidget {
 
     final String content = announcementData['content'] ?? 'No Content';
 
+    // Extract collegeCode
+    final String collegeCode = announcementData['collegeCode'] ?? 'Unknown College Code';
+
     // Reference to Firestore document
     final String documentId = announcementData['announcementId'];
 
-    // Function to update the status in Firestore and add to allAnnouncements collection
-    void _updateStatus(String status) async {
+    // Function to add the announcement to all relevant Firestore collections
+    Future<void> _addAnnouncementToFirestore() async {
       try {
-        // Debugging: Print the document ID for better tracking
-        print('Updating status for announcement ID: $documentId');
+        final firestore = FirebaseFirestore.instance;
 
-        // Check if the document exists in announcementRequests
-        var requestDoc = await FirebaseFirestore.instance
-            .collection('announcementRequests')
-            .doc(documentId)
-            .get();
+        // Retrieve the clubId from the announcementData (or pass it when creating the announcement)
+        // Declare the announcementData map here
+        final Map<String, dynamic> announcementData = {
+          'subject': subject,
+          'createdAt': createdAt,
+          'adminName': adminName,
+          'adminBranch': adminBranch,
+          'adminRollNumber': adminRollNumber,
+          'adminProfilePic': adminProfilePic,
+          'clubName': clubName,
+          'clubAim': clubAim,
+          'clubCategory': clubCategory,
+          'clubLogoUrl': clubLogoUrl,
+          'content': content,
+          'announcementId': documentId,
+          'collegeCode': collegeCode,
+          'clubId': clubId, // Add clubId to the data
+        };
 
-        if (!requestDoc.exists) {
-          print('Document not found in announcementRequests');
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Document missing in announcementRequests: $documentId')));
-          return;
+        // Batch write to Firestore
+        WriteBatch batch = firestore.batch();
+
+        // Add announcement to allAnnouncements
+        batch.set(firestore.collection('allAnnouncements').doc(documentId), announcementData);
+
+        batch.set(firestore.collection('allClubs').doc(clubId).collection('myAnnouncement').doc(documentId), announcementData);
+
+        
+        // Add announcement to collegeAnnouncements
+        batch.set(
+          firestore.collection('users').doc(collegeCode).collection('collegeAnnouncements').doc(documentId),
+          announcementData,
+        );
+
+        // Add announcement to myAnnouncements for admin
+        batch.set(
+          firestore.collection('users').doc(collegeCode).collection('students').doc(adminRollNumber).collection('myClubs').doc(clubId).collection('myAnnouncement').doc(documentId),
+          announcementData,
+        );
+
+        // Commit the batch write
+        await batch.commit();
+
+        await firestore.collection('announcementRequests').doc(documentId).delete();
+
+
+        // Show success and navigate back
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Announcement Accepted')));
+        Navigator.pop(context); // Go back to the previous page
+      } catch (e) {
+        print('Error: $e');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+      }
+    }
+
+    // Function to reject the announcement (removes from requests and navigates back)
+    Future<void> _rejectAnnouncement() async {
+      try {
+        // Ensure document exists before attempting deletion from announcementRequests collection
+        final firestore = FirebaseFirestore.instance;
+        final announcementRequestDoc = await firestore.collection('users').doc(collegeCode).collection('collegeAnnouncements').doc(documentId).get();
+
+        if (announcementRequestDoc.exists) {
+          // Remove the announcement from the announcementRequests collection
+          await firestore.collection('users').doc(collegeCode).collection('announcementRequests').doc(documentId).delete();
+        } else {
+          print('Document not found in announcementRequests: $documentId');
         }
 
-        // Update the status in the announcementRequests collection
-        await FirebaseFirestore.instance
-            .collection('announcementRequests')
-            .doc(documentId)
-            .update({'status': status});
-
-        // If accepted, add to allAnnouncements and other collections
-        if (status == 'Accepted') {
-          // Add to the allAnnouncements collection
-          await FirebaseFirestore.instance
-              .collection('allAnnouncements')
-              .doc(documentId)
-              .set({
-            'subject': subject,
-            'createdAt': createdAt,
-            'adminName': adminName,
-            'adminBranch': adminBranch,
-            'adminRollNumber': adminRollNumber,
-            'adminProfilePic': adminProfilePic,
-            'clubName': clubName,
-            'clubAim': clubAim,
-            'clubCategory': clubCategory,
-            'clubLogoUrl': clubLogoUrl,
-            'content': content,
-            'announcementId': documentId,
-          });
-
-          // Add to the branch's collection
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(adminBranch)
-              .collection('collegeAnnouncements')
-              .doc(documentId)
-              .set({
-            'subject': subject,
-            'createdAt': createdAt,
-            'adminName': adminName,
-            'adminBranch': adminBranch,
-            'adminRollNumber': adminRollNumber,
-            'adminProfilePic': adminProfilePic,
-            'clubName': clubName,
-            'clubAim': clubAim,
-            'clubCategory': clubCategory,
-            'clubLogoUrl': clubLogoUrl,
-            'content': content,
-            'announcementId': documentId,
-          });
-
-          // Add to the student's collection under myAnnouncements
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(adminBranch)
-              .collection('students')
-              .doc(adminRollNumber)
-              .collection('myAnnouncements')
-              .doc(documentId)
-              .set({
-            'subject': subject,
-            'createdAt': createdAt,
-            'adminName': adminName,
-            'adminBranch': adminBranch,
-            'adminRollNumber': adminRollNumber,
-            'adminProfilePic': adminProfilePic,
-            'clubName': clubName,
-            'clubAim': clubAim,
-            'clubCategory': clubCategory,
-            'clubLogoUrl': clubLogoUrl,
-            'content': content,
-            'announcementId': documentId,
-          });
-        }
-
-        // Remove the announcement from the announcementRequests collection (both for accepted and rejected)
-        await FirebaseFirestore.instance
-            .collection('announcementRequests')
-            .doc(documentId)
-            .delete();
-
-        // Show a snackbar or navigate back after updating
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Announcement $status')));
+        // Show a snackbar and navigate back after rejecting the announcement
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Announcement Rejected')));
+        Navigator.pop(context);  // Go back to the previous page
       } catch (e) {
         print('Error: $e');
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
@@ -135,6 +119,7 @@ class AnnouncementDetailsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Announcement Details'),
+        backgroundColor: Colors.teal, // AppBar color for a fresh look
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -145,21 +130,21 @@ class AnnouncementDetailsPage extends StatelessWidget {
               // Display Subject
               Text(
                 'Subject: $subject',
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.teal),
               ),
               const SizedBox(height: 8),
 
               // Display Created Date
               Text(
                 'Created on: $formattedDate',
-                style: const TextStyle(fontSize: 16),
+                style: const TextStyle(fontSize: 16, color: Colors.grey),
               ),
               const SizedBox(height: 16),
 
               // Admin Info
               Text(
                 'Admin Name: $adminName',
-                style: const TextStyle(fontSize: 18),
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               Text(
                 'Branch: $adminBranch',
@@ -171,14 +156,23 @@ class AnnouncementDetailsPage extends StatelessWidget {
               ),
               if (adminProfilePic.isNotEmpty) ...[
                 const SizedBox(height: 8),
-                Image.network(adminProfilePic, width: 50, height: 50, fit: BoxFit.cover),
+                ClipOval(
+                  child: Image.network(adminProfilePic, width: 50, height: 50, fit: BoxFit.cover),
+                ),
               ],
+              const SizedBox(height: 16),
+
+              // College Code Display
+              Text(
+                'College Code: $collegeCode',
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 16),
 
               // Club Info
               Text(
                 'Club Name: $clubName',
-                style: const TextStyle(fontSize: 18),
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               Text(
                 'Club Aim: $clubAim',
@@ -190,7 +184,9 @@ class AnnouncementDetailsPage extends StatelessWidget {
               ),
               if (clubLogoUrl.isNotEmpty) ...[
                 const SizedBox(height: 8),
-                Image.network(clubLogoUrl, width: 50, height: 50, fit: BoxFit.cover),
+                ClipOval(
+                  child: Image.network(clubLogoUrl, width: 50, height: 50, fit: BoxFit.cover),
+                ),
               ],
               const SizedBox(height: 16),
 
@@ -206,14 +202,14 @@ class AnnouncementDetailsPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(
-                    onPressed: () => _updateStatus('Accepted'),
+                    onPressed: _addAnnouncementToFirestore,
                     child: const Text('Accept'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green, // Green color for Accept button
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () => _updateStatus('Rejected'),
+                    onPressed: _rejectAnnouncement,
                     child: const Text('Reject'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red, // Red color for Reject button

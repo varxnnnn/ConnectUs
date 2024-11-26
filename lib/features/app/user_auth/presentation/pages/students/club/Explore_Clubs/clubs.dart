@@ -99,7 +99,7 @@ class _AllClubsPageState extends State<AllClubsPage> {
             elevation: 0, // No elevation for a flat look
             margin: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0.2),
+              padding: const EdgeInsets.symmetric(horizontal: 17.0, vertical: 0.2),
               child: Row(
                 children: [
                   const Icon(

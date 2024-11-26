@@ -31,11 +31,11 @@ class _ClubsPageState extends State<ClubsPage> {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  _buildTabButton(0, 'Explore Explore_Clubs'),
+                  _buildTabButton(0, 'Explore Clubs'),
                   const SizedBox(width: 10),
-                  _buildTabButton(1, 'Explore Explore_Events'),
+                  _buildTabButton(1, 'Explore Events'),
                   const SizedBox(width: 10),
-                  _buildTabButton(2, 'My Explore_Clubs'),
+                  _buildTabButton(2, 'My Clubs'),
                 ],
               ),
             ),
@@ -51,7 +51,7 @@ class _ClubsPageState extends State<ClubsPage> {
                 },
                 children: [
                   AllClubsPage(collegeCode: widget.collegeCode),
-                  AllEvents(collegeCode: widget.collegeCode),
+                  AllEvents(collagecode: widget.collegeCode),
                   MyClubsPage(collegeCode: widget.collegeCode, rollNumber: widget.rollNumber),
                 ],
               ),

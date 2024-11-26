@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
 import 'announcement_tab.dart';
 import 'events_tab.dart';
 
@@ -21,6 +21,79 @@ class ClubDetailsPage extends StatefulWidget {
 
 class _ClubDetailsPageState extends State<ClubDetailsPage> {
   int _selectedTabIndex = 0;
+  int? _memberCount;
+
+  // Firestore reference for the club members
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchMemberCount();
+  }
+
+  // Function to fetch the member count from Firestore
+  Future<void> _fetchMemberCount() async {
+    final clubId = widget.clubDetails['id'];
+    try {
+      // Fetch the club document and get the member list
+      final clubDoc = await _firestore.collection('allClubs').doc(clubId).get();
+      final members = clubDoc.data()?['members'] ?? [];
+      setState(() {
+        _memberCount = members.length; // Set the member count
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error fetching member count: $e')));
+    }
+  }
+
+  // Function to handle joining the club
+  Future<void> _joinClub() async {
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+    final clubId = widget.clubDetails['id'];
+    final adminId = widget.clubDetails['adminId'];
+    final adminRollNumber = widget.clubDetails['adminRollNumber'];
+
+    try {
+      if (userId == adminId) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('You cannot join the club as you are the admin.')),
+        );
+        return; // Prevent the user from joining the club if they are the admin
+      }
+
+      // Update the club's member list
+      await _firestore
+          .collection('allClubs')
+          .doc(clubId)
+          .update({
+        'members': FieldValue.arrayUnion([userId]), // Add the user to the members list
+      });
+      await _firestore
+          .collection('users')
+          .doc(widget.collegeCode)
+          .collection('students')
+          .doc(adminRollNumber) // Using the current user's ID
+          .collection('myClubs')
+          .doc(clubId)
+          .update({
+        'members': FieldValue.arrayUnion([userId]), // Add the user to the members list
+      });
+      await _firestore
+          .collection('users')
+          .doc(widget.collegeCode)
+          .collection('collegeClubs')
+          .doc(clubId)
+          .update({
+        'members': FieldValue.arrayUnion([userId]), // Add the user to the members list
+      });
+      // Optionally show a success message
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('You have joined the club!')));
+    } catch (e) {
+      // Handle errors
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error joining the club: $e')));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +122,7 @@ class _ClubDetailsPageState extends State<ClubDetailsPage> {
                 children: [
                   _buildTabButton(0, 'About Us'),
                   const SizedBox(width: 10),
-                  _buildTabButton(1, 'Explore_Events'),
+                  _buildTabButton(1, 'Events'),
                   const SizedBox(width: 10),
                   _buildTabButton(2, 'Announcements'),
                 ],
@@ -63,7 +136,7 @@ class _ClubDetailsPageState extends State<ClubDetailsPage> {
                 clubDetails: widget.clubDetails,
                 clubId: widget.clubDetails['id'], // Pass the clubId here
               ),
-            if (_selectedTabIndex == 2) AnnouncementsTab(clubDetails: widget.clubDetails),
+            if (_selectedTabIndex == 2) AnnouncementsTab(clubDetails: widget.clubDetails,),
           ],
         ),
       ),
@@ -152,6 +225,10 @@ class _ClubDetailsPageState extends State<ClubDetailsPage> {
         _buildInfoRow('Category', widget.clubDetails['category'] ?? 'Uncategorized'),
         _buildInfoRow('Description', widget.clubDetails['description'] ?? 'No description provided'),
         _buildInfoRow('Created At', _formatDate(widget.clubDetails['createdAt'])),
+        // Display the member count below the Created At section
+        _buildInfoRow('Members Count', _memberCount?.toString() ?? '0'),
+        // Display the college code
+        _buildInfoRow('College Code', widget.collegeCode),
         const SizedBox(height: 20),
         _buildSectionHeader('Admin Information', Color(0xFFF9AA33)),
         Padding(
@@ -163,6 +240,20 @@ class _ClubDetailsPageState extends State<ClubDetailsPage> {
             widget.clubDetails['adminRollNumber'],
           ),
         ),
+        const SizedBox(height: 20),
+        // Join Club Button
+        ElevatedButton(
+          onPressed: _joinClub,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Color(0xFFF9AA33), // Button color
+            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+          ),
+          child: const Text(
+            'Join Club',
+            style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+        ),
       ],
     );
   }
@@ -172,49 +263,57 @@ class _ClubDetailsPageState extends State<ClubDetailsPage> {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Text(
         title,
-        style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: color),
+        style: TextStyle(color: color, fontSize: 18, fontWeight: FontWeight.bold),
       ),
     );
   }
 
   Widget _buildInfoRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text('$label: ', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-          Expanded(child: Text(value, style: const TextStyle(fontSize: 16))),
+          Text(
+            label,
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: TextStyle(fontSize: 16, color: Colors.white),
+              textAlign: TextAlign.right,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildAdminInfo(String? profilePicUrl, String? adminName, String? adminBranch, String? adminRollNumber) {
+  Widget _buildAdminInfo(String? profilePic, String adminName, String adminBranch, String adminRollNumber) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        profilePicUrl != null && profilePicUrl.isNotEmpty
-            ? CircleAvatar(radius: 50, backgroundImage: NetworkImage(profilePicUrl))
-            : const CircleAvatar(radius: 50, backgroundImage: AssetImage('assets/images/default_profile_pic.png')),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildInfoRow('Admin Name', adminName ?? 'Unknown Leader'),
-              _buildInfoRow('Admin Branch', adminBranch ?? 'No branch'),
-              _buildInfoRow('Admin Roll Number', adminRollNumber ?? 'No roll number'),
-            ],
-          ),
+        CircleAvatar(
+          radius: 30,
+          backgroundImage: profilePic != null && profilePic.isNotEmpty
+              ? NetworkImage(profilePic)
+              : AssetImage('assets/images/default_avatar.png') as ImageProvider,
+        ),
+        const SizedBox(width: 10),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(adminName, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+            Text(adminBranch, style: TextStyle(fontSize: 14, color: Colors.white)),
+            Text(adminRollNumber, style: TextStyle(fontSize: 14, color: Colors.white)),
+          ],
         ),
       ],
     );
   }
 
-  String _formatDate(Timestamp? timestamp) {
-    if (timestamp == null) return 'Not available';
-    final dateTime = timestamp.toDate();
-    return DateFormat.yMMMd().add_jm().format(dateTime);
+  String _formatDate(Timestamp timestamp) {
+    final date = DateTime.fromMillisecondsSinceEpoch(timestamp.seconds * 1000);
+    return DateFormat.yMMMd().format(date);
   }
 }

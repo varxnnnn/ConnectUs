@@ -93,7 +93,8 @@ class _CreateAnnouncementPageState extends State<CreateAnnouncementPage> {
           'adminName': adminData['name'], // Admin name from Firestore
           'adminProfilePic': adminData['profilePictureUrl'], // Admin profile picture from Firestore
           'adminRollNumber': adminData['rollNumber'], // Admin's roll number from Firestore
-          'adminBranch': adminData['branch'], // Admin's branch from Firestore
+          'adminBranch': adminData['branch'],
+          'collegeCode': widget.collegeCode,// Admin's branch from Firestore
           'clubName': widget.clubDetails['name'], // Add club name from the clubDetails
           'clubAim': widget.clubDetails['aim'], // Add club aim from the clubDetails
           'clubCategory': widget.clubDetails['category'], // Add club category from the clubDetails

@@ -3,9 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'event_details_page.dart';
 
 class AllEvents extends StatefulWidget {
-  final String collegeCode;
+  final String collagecode;
 
-  const AllEvents({Key? key, required this.collegeCode}) : super(key: key);
+  const AllEvents({Key? key, required this.collagecode}) : super(key: key);
 
   @override
   _AllEventsState createState() => _AllEventsState();
@@ -33,7 +33,7 @@ class _AllEventsState extends State<AllEvents> {
     // Apply college code filter if "All" is not selected
     if (!_selectedCollegeCodes.contains("All")) {
       query = query.where(
-        'collegeCode',
+        'collagecode',
         whereIn: _selectedCollegeCodes.isNotEmpty ? _selectedCollegeCodes.toList() : null,
       );
     }
@@ -118,7 +118,6 @@ class _AllEventsState extends State<AllEvents> {
               ),
             ),
           ),
-
           const SizedBox(height: 8),
           // Scrollable list of college code filters
           SizedBox(
