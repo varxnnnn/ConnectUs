@@ -193,7 +193,7 @@ class _AllEventsState extends State<AllEvents> {
                                     flex: 3,
                                     child: event['posterUrl'] != null
                                         ? Image.network(
-                                      event['posterUrl']!,
+                                      event['posterUrl'], // Use posterUrl here
                                       fit: BoxFit.cover,
                                     )
                                         : Container(

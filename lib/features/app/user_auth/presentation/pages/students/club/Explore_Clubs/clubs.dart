@@ -94,7 +94,7 @@ class _AllClubsPageState extends State<AllClubsPage> {
           Card(
             color: Color(0xFFF0F0F0), // Light gray background similar to WhatsApp
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20), // Fully rounded corners
+              borderRadius: BorderRadius.circular(10), // Fully rounded corners
             ),
             elevation: 0, // No elevation for a flat look
             margin: const EdgeInsets.symmetric(horizontal: 16.0),

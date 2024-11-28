@@ -81,7 +81,12 @@ class AnnouncementDetailsPage extends StatelessWidget {
         // Commit the batch write
         await batch.commit();
 
-        await firestore.collection('announcementRequests').doc(documentId).delete();
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(collegeCode)
+            .collection('announcementRequests')
+            .doc(documentId)
+            .delete();
 
 
         // Show success and navigate back

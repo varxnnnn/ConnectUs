@@ -63,7 +63,7 @@ class _HomePageState extends State<HomePage> {
               const Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Text(
-                  'Upcoming Explore Events',
+                  'Upcoming Explore Clubs',
                   style: TextStyle(
                     fontSize: 32,
                     fontFamily: 'Archivo',
@@ -77,7 +77,7 @@ class _HomePageState extends State<HomePage> {
               const Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Text(
-                  'Explore Clubs',
+                  'Explore Events',
                   style: TextStyle(
                     fontSize: 32,
                     fontFamily: 'Archivo',
@@ -150,60 +150,70 @@ class _HomePageState extends State<HomePage> {
               final eventData = snapshot.data![index].data() as Map<String, dynamic>;
               String eventName = eventData['name'] ?? 'Unknown Event';
               String clubName = eventData['clubName'] ?? 'Unknown Club';
-              String clubAdmin = eventData['clubAdmin'] ?? 'Unknown Admin';
-              String admissionFee = eventData['admissionFee'] ?? 'N/A';
-              String date = eventData['date'] ?? 'No Date';
-              String time = eventData['time'] ?? 'No Time';
               String posterUrl = eventData['posterUrl'] ?? '';
-              String venue = eventData['venue'] ?? 'Unknown Venue';
-              String restrictions = eventData['restrictions'] ?? 'None';
 
-              return Card(
-                color: const Color(0xFF1E2018),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Image.network(
-                        posterUrl,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
+              return Stack(
+                children: [
+                  // Event Poster
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10), // Rounded corners
+                    child: Image.network(
+                      posterUrl,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
+                    ),
+                  ),
+                  // Overlay for text
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10), // Match rounded corners
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.black.withOpacity(0.8), // Dark at the bottom
+                          Colors.transparent, // Fade to transparent at the top
+                        ],
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        eventName,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                  ),
+                  // Event Details
+                  Positioned(
+                    bottom: 16, // Padding from the bottom
+                    left: 16,  // Padding from the left
+                    right: 16, // Padding from the right
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          eventName,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
+                        const SizedBox(height: 4), // Space between text
+                        Text(
+                          'Club: $clubName',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.white70,
+                          ),
+                        ),
+                      ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Text(
-                        'Club: $clubName',
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Text(
-                        'Admin: $clubAdmin',
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               );
             },
             options: CarouselOptions(
-              height: 400, // Adjust height as necessary
+              height: 400, // Adjust height for card dimensions
               autoPlay: true,
               autoPlayInterval: const Duration(seconds: 3),
-              viewportFraction: 0.8,
-              enlargeCenterPage: true,
+              viewportFraction: 0.9, // Slight margin on the sides
+              enlargeCenterPage: true, // Highlight the center card
             ),
           );
         }
@@ -238,24 +248,30 @@ class _HomePageState extends State<HomePage> {
                 // Last item, "See More" button
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: TextButton(
-                    onPressed: () {
-                      // Navigate to the ClubsPage with BottomNavBar
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ClubsPage(
-                            collegeCode: widget.collegeCode,
-                            rollNumber: widget.rollnumber,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1E2018), // Background color for the block
+                      borderRadius: BorderRadius.circular(10), // Optional: Add rounded corners
+                    ),
+                    child: TextButton(
+                      onPressed: () {
+                        // Navigate to the ClubsPage with BottomNavBar
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ClubsPage(
+                              collegeCode: widget.collegeCode,
+                              rollNumber: widget.rollnumber,
+                            ),
                           ),
+                        );
+                      },
+                      child: const Text(
+                        'See More',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.white,
                         ),
-                      );
-                    },
-                    child: const Text(
-                      'See More',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -280,7 +296,9 @@ class _HomePageState extends State<HomePage> {
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
                           clubName,
+                          textAlign: TextAlign.center,
                           style: const TextStyle(
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
@@ -298,6 +316,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   /// Builds the list view of announcements fetched from Firestore
+  /// Builds the list view of announcements fetched from Firestore
   Widget _buildAnnouncementList() {
     return FutureBuilder<List<QueryDocumentSnapshot>>(
       future: _fetchAnnouncements(),
@@ -314,21 +333,71 @@ class _HomePageState extends State<HomePage> {
             physics: const NeverScrollableScrollPhysics(),
             itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
-              final announcementData =
-              snapshot.data![index].data() as Map<String, dynamic>;
-              String title = announcementData['title'] ?? 'No Title';
-              String description = announcementData['description'] ?? 'No Description';
+              final announcementData = snapshot.data![index].data() as Map<String, dynamic>;
+              String subject = announcementData['subject'] ?? 'Unknown Subject';
+              String content = announcementData['content'] ?? '';
+              String clubName = announcementData['clubName'] ?? 'Unknown Club';
+              String clubLogoUrl = announcementData['clubLogoUrl'] ?? ''; // Assuming the club logo is a URL
+
+              // Truncate content to display only one or two lines
+              String truncatedContent = content.length > 50 ? content.substring(0, 50) + '...' : content;
 
               return Card(
                 color: const Color(0xFF1E2018),
-                child: ListTile(
-                  title: Text(
-                    title,
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                  subtitle: Text(
-                    description,
-                    style: const TextStyle(color: Colors.white),
+                margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Display club logo if available
+                      clubLogoUrl.isNotEmpty
+                          ? ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Image.network(
+                          clubLogoUrl,
+                          width: 40.0,
+                          height: 40.0,
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                          : const SizedBox(width: 40.0), // Placeholder if no logo
+
+                      const SizedBox(width: 12.0), // Space between logo and text
+
+                      // Announcement text content
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              subject,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(height: 8.0),
+                            Text(
+                              truncatedContent,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.white70,
+                              ),
+                            ),
+                            const SizedBox(height: 8.0),
+                            Text(
+                              'From: $clubName',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.white70,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               );
@@ -337,5 +406,5 @@ class _HomePageState extends State<HomePage> {
         }
       },
     );
-  }
+}
 }

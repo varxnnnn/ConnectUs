@@ -94,7 +94,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
       String? posterUrl;
 
       if (_eventPoster != null) {
-        posterUrl = await _uploadImage(_eventPoster!, 'events/${widget.collegeCode}/${widget.rollNumber}/poster.jpg');
+        posterUrl = await _uploadImage(_eventPoster!, 'events/${widget.collegeCode}/${widget.rollNumber}/${_eventNameController.text}_poster.jpg');
       }
 
       final eventData = {

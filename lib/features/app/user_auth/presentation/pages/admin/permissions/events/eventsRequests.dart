@@ -10,6 +10,9 @@ class EventsRequestsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Event Requests'),
+      ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('users')
@@ -35,30 +38,121 @@ class EventsRequestsPage extends StatelessWidget {
             itemCount: events.length,
             itemBuilder: (context, index) {
               final event = events[index].data() as Map<String, dynamic>;
-              final eventName = event['name'];
-              final clubName = event['clubName'];
+              final eventName = event['name'] ?? 'Untitled Event';
+              final clubName = event['clubName'] ?? 'Unknown Club';
               final eventId = events[index].id; // To use this in navigation
+              final eventImageUrl = event['posterUrl'] ?? ''; // You can replace this with your event image URL field
+              final eventDate = event['date'] ?? 'N/A';
 
-              return Card(
-                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                child: ListTile(
-                  contentPadding: const EdgeInsets.all(10),
-                  title: Text(eventName ?? 'Untitled Event'),
-                  subtitle: Text('Club: $clubName'),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.info),
-                    onPressed: () {
-                      // Navigate to EventDetailsPage with event information
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EventDetailsPage(
-                            eventId: eventId,
-                            collegeCode: collegeCode, clubDetails: {},
+              return GestureDetector(
+                onTap: () {
+                  // Navigate to EventDetailsPage with event information
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EventDetailsPage(
+                        eventId: eventId,
+                        collegeCode: collegeCode,
+                        clubDetails: {}, // Pass actual club details here if needed
+                      ),
+                    ),
+                  );
+                },
+                child: Card(
+                  margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                  child: SizedBox(
+                    height: 150,
+                    child: Stack(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: eventImageUrl.isNotEmpty
+                                  ? Image.network(
+                                eventImageUrl,
+                                fit: BoxFit.cover,
+                              )
+                                  : Container(
+                                color: Colors.grey,
+                                child: const Icon(
+                                  Icons.photo,
+                                  color: Colors.white,
+                                  size: 50,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Positioned.fill(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.transparent,
+                                  Colors.white.withOpacity(0.9),
+                                  Colors.white,
+                                ],
+                                stops: [0.2, 0.6, 0.8],
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                              ),
+                            ),
                           ),
                         ),
-                      );
-                    },
+                        Positioned(
+                          right: 8,
+                          top: 8,
+                          bottom: 8,
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.25,
+                            padding: const EdgeInsets.all(8),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  eventName,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: Colors.black,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  "Club: $clubName",
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  "Date: $eventDate",
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               );

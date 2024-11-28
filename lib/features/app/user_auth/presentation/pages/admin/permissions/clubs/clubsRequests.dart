@@ -18,13 +18,13 @@ class ClubsRequestsPage extends StatelessWidget {
             .snapshots(),
         builder: (context, requestsSnapshot) {
           if (!requestsSnapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           final requests = requestsSnapshot.data!.docs;
 
           if (requests.isEmpty) {
-            return Center(child: Text("No club requests found."));
+            return const Center(child: Text("No club requests found."));
           }
 
           return ListView.builder(
@@ -33,31 +33,107 @@ class ClubsRequestsPage extends StatelessWidget {
               final request = requests[index].data() as Map<String, dynamic>;
               final requestId = requests[index].id;
 
-              return Card(
-                margin: EdgeInsets.all(10),
-                elevation: 5, // Adjust elevation to your preference
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10), // Rounded corners
-                ),
-                child: ListTile(
-                  title: Text.rich(
-                    TextSpan(
-                      text: '${request['name'] ?? 'Unnamed Club'} CLUB',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                      ),
+              return GestureDetector(
+                onTap: () {
+                  _viewClubDetails(context, request, requestId);
+                },
+                child: Card(
+                  margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                  child: SizedBox(
+                    height: 150,
+                    child: Stack(
+                      children: [
+                        Row(
+                          children: [
+                            // Club logo
+                            Expanded(
+                              flex: 3,
+                              child: request['logoUrl'] != null
+                                  ? Image.network(
+                                request['logoUrl']!,
+                                fit: BoxFit.cover,
+                              )
+                                  : Container(
+                                color: Colors.grey,
+                                child: const Icon(
+                                  Icons.photo,
+                                  color: Colors.white,
+                                  size: 50,
+                                ),
+                              ),
+                            ),
+                            // Details background
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                        // Gradient overlay
+                        Positioned.fill(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.transparent,
+                                  Colors.white.withOpacity(0.9),
+                                  Colors.white,
+                                ],
+                                stops: [0.2, 0.6, 0.8],
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                              ),
+                            ),
+                          ),
+                        ),
+                        // Club details
+                        Positioned(
+                          right: 8,
+                          top: 8,
+                          bottom: 8,
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.25,
+                            padding: const EdgeInsets.all(8),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  request['name'] ?? 'Unnamed Club',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: Colors.black,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  request['category'] ?? 'Category not specified',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        // Arrow icon
+                        Positioned(
+                          right: 8,
+                          bottom: 8,
+                          child: Icon(
+                            Icons.arrow_forward_ios,
+                            color: Colors.black.withOpacity(0.7),
+                            size: 24,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  subtitle: Text("Requested by: ${request['adminName'] ?? 'Unknown'}"),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.info, color: Colors.blue),
-                        onPressed: () => _viewClubDetails(context, request, requestId),
-                      ),
-                    ],
                   ),
                 ),
               );

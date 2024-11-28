@@ -57,7 +57,7 @@ class _MainScreenState extends State<MainScreen> {
           HomePage(collegeCode: collegeCode ?? '', rollnumber: rollNumber ?? ''),
           ClubsPage(collegeCode: collegeCode ?? '', rollNumber: rollNumber ?? ''),
           ChatBotScreen(),
-          HotPage(),
+          HotPage(collegeCode: collegeCode ?? '', rollNumber: rollNumber ?? ''),
           ProfilePage(),
         ],
       ),
