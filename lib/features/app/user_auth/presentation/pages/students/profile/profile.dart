@@ -5,14 +5,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class ProfilePage extends StatelessWidget {
   ProfilePage({super.key});
 
-  static const Color primaryColor = Color(0xFF1F2628);
+  static const Color primaryColor = Color(0xFF050505);
   static const Color secondaryColor = Color(0xFFF9AA33);
   static const Color grayColor = Color(0xFF8A969B);
   static const Color textColor = Color(0xFFEDEDED);
 
   final Map<String, String> collegeNames = {
     'VGNT': 'Vignan',
-    'MGIT': 'Mahatma Gandhi Institute of Technology',
+    'MGIT': 'Mahatma Gandhi Institute',
     'HOLY': 'Holy Mary',
     'SNITS': 'Sreenidhi College',
     'GRRR': 'Gurunanak',

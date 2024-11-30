@@ -131,7 +131,7 @@ class about_us extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
-                  color: Colors.white70,
+                  color: Colors.white,
                 ),
               ),
               const SizedBox(height: 4),
@@ -139,7 +139,7 @@ class about_us extends StatelessWidget {
                 content,
                 style: const TextStyle(
                   fontSize: 16,
-                  color: Colors.white54,
+                  color: Colors.white,
                 ),
               ),
             ],

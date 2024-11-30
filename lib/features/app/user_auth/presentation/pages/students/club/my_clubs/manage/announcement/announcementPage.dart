@@ -13,7 +13,7 @@ class AnnouncementsPage extends StatelessWidget {
     // Access the collegeCode and adminRollNumber from clubDetails
     final collegeCode = clubDetails['collegeCode'] ?? ''; // Provide a default if null
     final adminRollNumber = clubDetails['adminRollNumber'] ?? '';
-    final clubId = clubDetails['clubId'] ??'';// Provide a default if null
+    final clubId = clubDetails['clubId'] ?? ''; // Provide a default if null
 
     return Scaffold(
       body: StreamBuilder<QuerySnapshot>(
@@ -24,7 +24,7 @@ class AnnouncementsPage extends StatelessWidget {
             .doc(adminRollNumber)  // Accessing the student by roll number
             .collection('myClubs')
             .doc(clubId)
-            .collection('myAnnouncement')// Fetching announcements for this student
+            .collection('myAnnouncement') // Fetching announcements for this student
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -48,24 +48,41 @@ class AnnouncementsPage extends StatelessWidget {
               final String formattedDate =
                   '${createdDate.day}/${createdDate.month}/${createdDate.year} ${createdDate.hour}:${createdDate.minute}';
 
-              return Card(
-                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                child: ListTile(
-                  title: Text(subject, style: const TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: Text(content),
-                  trailing: Text(formattedDate, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-                  onTap: () {
-                    // Navigate to the AnnouncementDetailsPage and pass the announcement data
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AnnouncementDetailsPage(
-                          announcementData: announcement,  // Pass the full announcement data
+              return Column(
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.announcement, color: Colors.orange),  // Icon for announcement
+                    title: Text(subject, style: const TextStyle(fontWeight: FontWeight.bold)),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(content),
+                        const SizedBox(height: 8),  // Space between content and date
+                        Text(
+                          'Posted on: $formattedDate',
+                          style: const TextStyle(fontSize: 12, color: Colors.grey),
                         ),
-                      ),
-                    );
-                  },
-                ),
+                      ],
+                    ),
+                    onTap: () {
+                      // Navigate to the AnnouncementDetailsPage and pass the announcement data
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AnnouncementDetailsPage(
+                            announcementData: announcement,  // Pass the full announcement data
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  const Divider(
+                    color: Colors.grey, // Divider color
+                    thickness: 0.5,       // Divider thickness
+                    indent: 16,           // Indentation from the left
+                    endIndent: 16,        // Indentation from the right
+                  ),
+                ],
               );
             },
           );

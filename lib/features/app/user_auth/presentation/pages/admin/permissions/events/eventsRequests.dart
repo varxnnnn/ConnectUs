@@ -10,9 +10,6 @@ class EventsRequestsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Event Requests'),
-      ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('users')
@@ -58,6 +55,8 @@ class EventsRequestsPage extends StatelessWidget {
                     ),
                   );
                 },
+
+
                 child: Card(
                   margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
                   child: SizedBox(

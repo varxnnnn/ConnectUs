@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   // Define your custom colors
-  static const Color primaryColor = Color(0xFF1F2628); // Dark primary color
+  static const Color primaryColor = Color(0xFF090909); // Dark primary color
   static const Color secondaryColor = Color(0xFFF9AA33); // Light secondary color
   static const Color darkColor = Colors.white; // Text on dark backgrounds
   static const Color grayColor = Color(0xFF7D7F88); // Gray for secondary text

@@ -24,7 +24,7 @@ class _HotPageState extends State<HotPage> {
 
   Future<List<QueryDocumentSnapshot>> _fetchClubs() async {
     final snapshot = await FirebaseFirestore.instance
-        .collection('users/${widget.collegeCode}/collegeClubs')
+        .collection('allClubs')
         .limit(4)
         .get();
     return snapshot.docs;
@@ -32,7 +32,7 @@ class _HotPageState extends State<HotPage> {
 
   Future<List<QueryDocumentSnapshot>> _fetchEvents() async {
     final snapshot = await FirebaseFirestore.instance
-        .collection('users/${widget.collegeCode}/collegeEvents')
+        .collection('allEvents')
         .limit(4)
         .get();
     return snapshot.docs;
@@ -40,7 +40,7 @@ class _HotPageState extends State<HotPage> {
 
   Future<List<QueryDocumentSnapshot>> _fetchAnnouncements() async {
     final snapshot = await FirebaseFirestore.instance
-        .collection('users/${widget.collegeCode}/collegeAnnouncements')
+        .collection('allAnnouncements')
         .limit(4)
         .get();
     return snapshot.docs;

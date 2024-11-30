@@ -59,10 +59,6 @@ class AnnouncementsTab extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Club Announcements',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFFF9AA33)),
-            ),
             const SizedBox(height: 16),
             ListView.builder(
               shrinkWrap: true,
@@ -77,30 +73,46 @@ class AnnouncementsTab extends StatelessWidget {
                     ? '${createdAt.day}/${createdAt.month}/${createdAt.year}'
                     : 'Unknown Date';
 
-                return Card(
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  child: ListTile(
-                    title: Text(subject),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(content, maxLines: 1, overflow: TextOverflow.ellipsis),
-                        const SizedBox(height: 4),
-                        Text('Published on: $formattedDate', style: const TextStyle(fontSize: 12, color: Colors.grey)),
-                      ],
+                return Column(
+                  children: [
+                    ListTile(
+                      title: Text(
+                        subject,
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            content,
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Posted on: $formattedDate',
+                            style: const TextStyle(fontSize: 12, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                      leading: const Icon(Icons.announcement, color: Colors.orange),
+                      trailing: const Icon(Icons.arrow_forward, color: Colors.grey),
+                      onTap: () {
+                        // Handle navigation to Announcement Details page
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AnnouncementDetailsPage(announcementData: announcement),
+                          ),
+                        );
+                      },
                     ),
-                    leading: const Icon(Icons.announcement, color: Colors.orange),
-                    trailing: const Icon(Icons.arrow_forward, color: Colors.grey),
-                    onTap: () {
-                      // Handle navigation to Announcement Details page
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AnnouncementDetailsPage(announcementData: announcement),
-                        ),
-                      );
-                    },
-                  ),
+                    const Divider(
+                      color: Colors.grey, // Divider color
+                      thickness: 0.5,       // Divider thickness
+                      indent: 16,           // Indentation from the left
+                      endIndent: 16,        // Indentation from the right
+                    ),
+                  ],
                 );
               },
             ),
@@ -136,6 +148,11 @@ class AnnouncementDetailsPage extends StatelessWidget {
             Text(
               announcementData['content'] ?? 'No Content',
               style: const TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Posted on: ${announcementData['createdAt'] != null ? (announcementData['createdAt'] as Timestamp).toDate().toString() : 'Unknown Date'}',
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
             ),
           ],
         ),

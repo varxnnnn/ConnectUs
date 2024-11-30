@@ -50,7 +50,7 @@ class _ClubsPageState extends State<ClubsPage> {
                   });
                 },
                 children: [
-                  AllClubsPage(collegeCode: widget.collegeCode),
+                  AllClubsPage(collegeCode: widget.collegeCode,CrollNumber: widget.rollNumber),
                   AllEvents(collagecode: widget.collegeCode),
                   MyClubsPage(collegeCode: widget.collegeCode, rollNumber: widget.rollNumber),
                 ],

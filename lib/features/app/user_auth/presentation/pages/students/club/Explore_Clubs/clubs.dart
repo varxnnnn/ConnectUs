@@ -4,8 +4,9 @@ import 'club_details_page/clubdetailpage.dart';
 
 class AllClubsPage extends StatefulWidget {
   final String collegeCode;
+  final String CrollNumber;
 
-  const AllClubsPage({Key? key, required this.collegeCode}) : super(key: key);
+  const AllClubsPage({Key? key, required this.collegeCode, required this.CrollNumber,}) : super(key: key);
 
   @override
   _AllClubsPageState createState() => _AllClubsPageState();
@@ -187,6 +188,7 @@ class _AllClubsPageState extends State<AllClubsPage> {
                             builder: (context) => ClubDetailsPage(
                               clubDetails: club,
                               clubId: clubId,
+                              CrollNumber: widget.CrollNumber,
                               collegeCode: widget.collegeCode,
                             ),
                           ),

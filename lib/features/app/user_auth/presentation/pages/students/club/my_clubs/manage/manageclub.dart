@@ -81,7 +81,7 @@ class _ManageClubPageState extends State<ManageClubPage> {
               children: [
                 _buildTabButton(0, 'About Us'),
                 const SizedBox(width: 10),
-                _buildTabButton(1, 'Explore_Events'),
+                _buildTabButton(1, 'Events'),
                 const SizedBox(width: 10),
                 _buildTabButton(2, 'Announcements'),
               ],

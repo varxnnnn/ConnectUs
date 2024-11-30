@@ -26,28 +26,56 @@ class _HomePageState extends State<HomePage> {
     'assets/4.jpg',
   ];
 
+  // Fetch clubs from Firestore
   Future<List<QueryDocumentSnapshot>> _fetchClubs() async {
     final snapshot = await FirebaseFirestore.instance
-        .collection('allClubs')
-        .limit(4) // Fetch only 4 items
+        .collection('users')
+        .doc(widget.collegeCode)
+        .collection('collegeClubs')
+        .limit(6) // Fetch only 6 clubs
         .get();
     return snapshot.docs;
   }
 
-  Future<List<QueryDocumentSnapshot>> _fetchAnnouncements() async {
-    final snapshot = await FirebaseFirestore.instance
-        .collection('allAnnouncements')
-        .limit(4) // Fetch only 4 items
-        .get();
-    return snapshot.docs;
-  }
-
+  // Fetch events from Firestore
   Future<List<QueryDocumentSnapshot>> _fetchEvents() async {
     final snapshot = await FirebaseFirestore.instance
-        .collection('allEvents')
-        .limit(4) // Fetch only 4 items
+        .collection('users')
+        .doc(widget.collegeCode)
+        .collection('collegeEvents')
+        .limit(6) // Fetch only 6 events
         .get();
     return snapshot.docs;
+  }
+
+  // Fetch announcements from Firestore
+  Future<List<QueryDocumentSnapshot>> _fetchAnnouncements() async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.collegeCode)
+        .collection('collegeAnnouncements')
+        .limit(5) // Fetch only 5 announcements
+        .get();
+    return snapshot.docs;
+  }
+
+  // Fetch club IDs from Firestore (joined clubs)
+  Future<List<String>> _fetchJoinedClubs() async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.collegeCode)
+        .collection('students')
+        .doc(widget.rollnumber)
+        .collection('JoinedClubs')
+        .doc('ids')
+        .get();
+
+    // Assuming the club IDs are stored in an array field called 'clubIds'
+    if (snapshot.exists && snapshot.data() != null) {
+      return List<String>.from(snapshot.data()!['clubids'] ?? []);
+    } else {
+      return [];
+    }
   }
 
   @override
@@ -63,7 +91,7 @@ class _HomePageState extends State<HomePage> {
               const Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Text(
-                  'Upcoming Explore Clubs',
+                  'Our Clubs',
                   style: TextStyle(
                     fontSize: 32,
                     fontFamily: 'Archivo',
@@ -74,10 +102,27 @@ class _HomePageState extends State<HomePage> {
               ),
               // Display list view of clubs
               _buildClubList(),
+
+              // Horizontal list view for joined clubs
               const Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Text(
-                  'Explore Events',
+                  'Joined Clubs',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontFamily: 'Archivo',
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              // Display horizontal list of joined club IDs
+              _buildJoinedClubsList(),
+
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  'Upcoming Events',
                   style: TextStyle(
                     fontSize: 32,
                     fontFamily: 'Archivo',
@@ -91,7 +136,7 @@ class _HomePageState extends State<HomePage> {
               const Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Text(
-                  'Announcements',
+                  'Recent Announcements',
                   style: TextStyle(
                     fontSize: 32,
                     fontFamily: 'Archivo',
@@ -250,27 +295,25 @@ class _HomePageState extends State<HomePage> {
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1E2018), // Background color for the block
-                      borderRadius: BorderRadius.circular(10), // Optional: Add rounded corners
+                      color: const Color(0xFF1E2018), // Background color
+                      borderRadius: BorderRadius.circular(10),
                     ),
                     child: TextButton(
                       onPressed: () {
-                        // Navigate to the ClubsPage with BottomNavBar
+                        // Navigate to the Clubs Page
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ClubsPage(
-                              collegeCode: widget.collegeCode,
-                              rollNumber: widget.rollnumber,
-                            ),
+                            builder: (context) => ClubsPage(collegeCode: widget.collegeCode, // Pass collegeCode
+                              rollNumber: widget.rollnumber,),
                           ),
                         );
                       },
                       child: const Text(
                         'See More',
                         style: TextStyle(
-                          fontSize: 18,
                           color: Colors.white,
+                          fontSize: 18,
                         ),
                       ),
                     ),
@@ -279,32 +322,65 @@ class _HomePageState extends State<HomePage> {
               } else {
                 final clubData = snapshot.data![index].data() as Map<String, dynamic>;
                 String clubName = clubData['name'] ?? 'Unknown Club';
-                String clubLogoUrl = clubData['logoUrl'] ?? ''; // URL of the club's logo
+                String clubDescription = clubData['description'] ?? 'No description available';
+                String clubImageUrl = clubData['logoUrl'] ?? '';
 
-                return Card(
-                  color: const Color(0xFF1E2018),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: Image.network(
-                          clubLogoUrl,
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Stack(
+                      children: [
+                        // Club Image
+                        Image.network(
+                          clubImageUrl,
                           fit: BoxFit.cover,
+                          height: double.infinity,
                           width: double.infinity,
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          clubName,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                        // Overlay for text
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10), // Match rounded corners
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.black.withOpacity(0.7), // Dark at the bottom
+                                Colors.transparent, // Fade to transparent at the top
+                              ],
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.topCenter,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                        // Club details text
+                        Positioned(
+                          bottom: 16, // Padding from the bottom
+                          left: 16,  // Padding from the left
+                          right: 16, // Padding from the right
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                clubName,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              const SizedBox(height: 4), // Space between text
+                              Text(
+                                clubDescription,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.white70,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               }
@@ -315,8 +391,41 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  /// Builds the list view of announcements fetched from Firestore
-  /// Builds the list view of announcements fetched from Firestore
+  /// Builds the horizontal list view for joined clubs
+  Widget _buildJoinedClubsList() {
+    return FutureBuilder<List<String>>(
+      future: _fetchJoinedClubs(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return const Center(child: Text("Error loading joined clubs"));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text("No joined clubs available"));
+        } else {
+          return Container(
+            height: 100, // Set height for the horizontal list
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, index) {
+                final clubId = snapshot.data![index];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Chip(
+                    label: Text(clubId),
+                    backgroundColor: Colors.blue, // Customize as needed
+                  ),
+                );
+              },
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  /// Builds the list view of announcements
   Widget _buildAnnouncementList() {
     return FutureBuilder<List<QueryDocumentSnapshot>>(
       future: _fetchAnnouncements(),
@@ -334,70 +443,22 @@ class _HomePageState extends State<HomePage> {
             itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
               final announcementData = snapshot.data![index].data() as Map<String, dynamic>;
-              String subject = announcementData['subject'] ?? 'Unknown Subject';
-              String content = announcementData['content'] ?? '';
-              String clubName = announcementData['clubName'] ?? 'Unknown Club';
-              String clubLogoUrl = announcementData['clubLogoUrl'] ?? ''; // Assuming the club logo is a URL
+              String title = announcementData['title'] ?? 'No Title';
+              String content = announcementData['content'] ?? 'No Content';
 
-              // Truncate content to display only one or two lines
-              String truncatedContent = content.length > 50 ? content.substring(0, 50) + '...' : content;
-
-              return Card(
-                color: const Color(0xFF1E2018),
-                margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Display club logo if available
-                      clubLogoUrl.isNotEmpty
-                          ? ClipRRect(
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: Image.network(
-                          clubLogoUrl,
-                          width: 40.0,
-                          height: 40.0,
-                          fit: BoxFit.cover,
-                        ),
-                      )
-                          : const SizedBox(width: 40.0), // Placeholder if no logo
-
-                      const SizedBox(width: 12.0), // Space between logo and text
-
-                      // Announcement text content
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              subject,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(height: 8.0),
-                            Text(
-                              truncatedContent,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.white70,
-                              ),
-                            ),
-                            const SizedBox(height: 8.0),
-                            Text(
-                              'From: $clubName',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.white70,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  elevation: 5,
+                  child: ListTile(
+                    title: Text(title),
+                    subtitle: Text(content),
+                    onTap: () {
+                      // Handle tap if needed
+                    },
                   ),
                 ),
               );
@@ -406,5 +467,5 @@ class _HomePageState extends State<HomePage> {
         }
       },
     );
-}
+  }
 }

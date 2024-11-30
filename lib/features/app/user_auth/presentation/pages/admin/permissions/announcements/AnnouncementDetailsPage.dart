@@ -88,6 +88,7 @@ class AnnouncementDetailsPage extends StatelessWidget {
             .doc(documentId)
             .delete();
 
+        Navigator.pop(context);
 
         // Show success and navigate back
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Announcement Accepted')));
