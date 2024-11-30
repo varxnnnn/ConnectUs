@@ -73,7 +73,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.groups),
-            label: 'Explore_Clubs',
+            label: 'My Collage',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.chat),
@@ -81,7 +81,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.trending_up),
-            label: 'Hot',
+            label: 'Hot Page',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

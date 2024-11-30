@@ -27,7 +27,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     super.initState();
     // Initialize the pages with the collegeCode and adminId passed from the login
     _pages = [
-      HomeadminPage(), // Home Page
+      HomeAdminPage(collegeCode: widget.collegeCode, adminId: widget.adminId), // Home Page
       PermissionsPage(collegeCode: widget.collegeCode), // Pass college code to PermissionsPage
       ProfilePage(collegeCode: widget.collegeCode, adminId: widget.adminId), // Pass college code and adminId to ProfilePage
     ];

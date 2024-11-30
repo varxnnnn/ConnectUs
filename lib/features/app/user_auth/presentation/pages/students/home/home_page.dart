@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../club/clubspage.dart';
+import 'Club.dart';
 
 class HomePage extends StatefulWidget {
   final String collegeCode;
@@ -76,6 +77,24 @@ class _HomePageState extends State<HomePage> {
     } else {
       return [];
     }
+  }
+
+  Future<List<Club>> _fetchClubDetails(List<String> clubIds) async {
+    List<Club> clubs = [];
+
+    for (String clubId in clubIds) {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('allClubs')
+          .doc(clubId)
+          .get();
+
+      if (snapshot.exists) {
+        final clubData = snapshot.data()!;
+        clubs.add(Club.fromMap(clubData, clubId));
+      }
+    }
+
+    return clubs;
   }
 
   @override
@@ -403,27 +422,61 @@ class _HomePageState extends State<HomePage> {
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const Center(child: Text("No joined clubs available"));
         } else {
-          return Container(
-            height: 100, // Set height for the horizontal list
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                final clubId = snapshot.data![index];
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Chip(
-                    label: Text(clubId),
-                    backgroundColor: Colors.blue, // Customize as needed
+          // Fetch club details from allClubs collection
+          return FutureBuilder<List<Club>>(
+            future: _fetchClubDetails(snapshot.data!),
+            builder: (context, clubSnapshot) {
+              if (clubSnapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (clubSnapshot.hasError) {
+                return const Center(child: Text("Error loading club details"));
+              } else if (!clubSnapshot.hasData || clubSnapshot.data!.isEmpty) {
+                return const Center(child: Text("No club details available"));
+              } else {
+                return Container(
+                  height: 160, // Increase the height for larger items
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: clubSnapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      final club = clubSnapshot.data![index];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0), // More padding for spacing
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // Larger Circular club logo
+                            CircleAvatar(
+                              radius: 50, // Increased size for the logo
+                              backgroundImage: NetworkImage(club.imageUrl),
+                              backgroundColor: Colors.transparent,
+                            ),
+                            const SizedBox(height: 12), // More space between image and name
+                            // Larger Club name
+                            Text(
+                              club.name,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18, // Larger font size
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                 );
-              },
-            ),
+              }
+            },
           );
         }
       },
     );
   }
+
+
+
 
   /// Builds the list view of announcements
   Widget _buildAnnouncementList() {

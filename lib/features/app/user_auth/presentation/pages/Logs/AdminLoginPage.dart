@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../admin/AdminDashboardPage.dart';
+import 'AddCollegePage.dart'; // Import AddCollegePage
 
 class AdminLoginPage extends StatefulWidget {
   const AdminLoginPage({super.key});
@@ -80,11 +81,11 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 30),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text("Don't have an account?", style: TextStyle(color: grayColor)),
+                  const Text("I'm a student", style: TextStyle(color: grayColor)),
                   const SizedBox(width: 5),
                   GestureDetector(
                     onTap: () {
@@ -99,6 +100,20 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(height: 40),
+              // Add College button
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AddCollegePage()),
+                  );
+                },
+                child: const Text(
+                  "Add a College to Community",
+                  style: TextStyle(color: secondaryColor, fontWeight: FontWeight.bold),
+                ),
               ),
             ],
           ),

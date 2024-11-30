@@ -54,6 +54,7 @@ class _ClubDetailsPageState extends State<ClubDetailsPage> {
     final collegeCode = widget.clubDetails['collegeCode'];
 
     try {
+      // Check if the user is the admin, prevent joining if true
       if (userId == adminId) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('You cannot join the club as you are the admin.')),
@@ -61,45 +62,119 @@ class _ClubDetailsPageState extends State<ClubDetailsPage> {
         return;
       }
 
-      await _firestore
-          .collection('allClubs')
-          .doc(clubId)
-          .update({
-        'members': FieldValue.arrayUnion([userId]),
-      });
-      await _firestore
+      // Check if the club document exists, create it if missing
+      var clubDoc = await _firestore.collection('allClubs').doc(clubId).get();
+      if (!clubDoc.exists) {
+        await _firestore.collection('allClubs').doc(clubId).set({
+          'members': [userId], // Initialize the 'members' array if missing
+        });
+      } else {
+        await _firestore.collection('allClubs').doc(clubId).update({
+          'members': FieldValue.arrayUnion([userId]), // Add the user to the 'members' array
+        });
+      }
+
+      // Check if the admin's club document exists and create it if missing
+      var adminClubDoc = await _firestore
           .collection('users')
           .doc(collegeCode)
           .collection('students')
           .doc(adminRollNumber)
           .collection('myClubs')
           .doc(clubId)
-          .update({
-        'members': FieldValue.arrayUnion([userId]),
-      });
-      await _firestore
+          .get();
+
+      if (!adminClubDoc.exists) {
+        await _firestore
+            .collection('users')
+            .doc(collegeCode)
+            .collection('students')
+            .doc(adminRollNumber)
+            .collection('myClubs')
+            .doc(clubId)
+            .set({
+          'members': [userId], // Initialize the 'members' array if missing
+        });
+      } else {
+        await _firestore
+            .collection('users')
+            .doc(collegeCode)
+            .collection('students')
+            .doc(adminRollNumber)
+            .collection('myClubs')
+            .doc(clubId)
+            .update({
+          'members': FieldValue.arrayUnion([userId]), // Add the user to the 'members' array
+        });
+      }
+
+      // Check if the college's club document exists, create it if missing
+      var collegeClubDoc = await _firestore
           .collection('users')
           .doc(collegeCode)
           .collection('collegeClubs')
           .doc(clubId)
-          .update({
-        'members': FieldValue.arrayUnion([userId]),
-      });
+          .get();
 
-      await _firestore
+      if (!collegeClubDoc.exists) {
+        await _firestore
+            .collection('users')
+            .doc(collegeCode)
+            .collection('collegeClubs')
+            .doc(clubId)
+            .set({
+          'members': [userId], // Initialize the 'members' array if missing
+        });
+      } else {
+        await _firestore
+            .collection('users')
+            .doc(collegeCode)
+            .collection('collegeClubs')
+            .doc(clubId)
+            .update({
+          'members': FieldValue.arrayUnion([userId]), // Add the user to the 'members' array
+        });
+      }
+
+      // Check if the student's 'JoinedClubs' document exists and create it if missing
+      var joinedClubsDoc = await _firestore
           .collection('users')
           .doc(widget.collegeCode)
           .collection('students')
           .doc(widget.CrollNumber)
           .collection('JoinedClubs')
           .doc('ids')
-          .update({
-        'clubids': FieldValue.arrayUnion([clubId]),
-      });
+          .get();
 
+      if (!joinedClubsDoc.exists) {
+        await _firestore
+            .collection('users')
+            .doc(widget.collegeCode)
+            .collection('students')
+            .doc(widget.CrollNumber)
+            .collection('JoinedClubs')
+            .doc('ids')
+            .set({
+          'clubids': [clubId], // Initialize the 'clubids' array if missing
+        });
+      } else {
+        await _firestore
+            .collection('users')
+            .doc(widget.collegeCode)
+            .collection('students')
+            .doc(widget.CrollNumber)
+            .collection('JoinedClubs')
+            .doc('ids')
+            .update({
+          'clubids': FieldValue.arrayUnion([clubId]), // Add the clubId to the 'clubids' array
+        });
+      }
+
+      // Show success message
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('You have joined the club!')));
     } catch (e) {
+      // Show error message
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Error joining the club: $e')));
     }

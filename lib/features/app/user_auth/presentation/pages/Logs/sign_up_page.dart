@@ -302,6 +302,8 @@ class _SignUpPageState extends State<SignUpPage> {
         'profilePictureUrl': _profileImageUrl,
         'bio': _bioController.text,
         'location': _locationController.text,
+        'verification' : "Pending",
+        'uid' : uid,
       });
 
       await _firestore.collection('allUsers').doc(uid).set({
@@ -314,6 +316,9 @@ class _SignUpPageState extends State<SignUpPage> {
         'profilePictureUrl': _profileImageUrl,
         'bio': _bioController.text,
         'location': _locationController.text,
+        'verification' : "Pending",
+        'uid' : uid,
+
       });
 
       showToast(message: "Sign up successful!");

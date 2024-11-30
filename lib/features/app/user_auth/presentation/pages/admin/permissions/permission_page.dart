@@ -3,7 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project1/features/app/user_auth/presentation/pages/admin/permissions/announcements/announcementRequests.dart';
 import 'package:project1/features/app/user_auth/presentation/pages/admin/permissions/clubs/clubsRequests.dart';
 import 'package:project1/features/app/user_auth/presentation/pages/admin/permissions/events/eventsRequests.dart';
-import 'package:flutter/services.dart'; // Import for controlling system UI
+import 'package:flutter/services.dart';
+import 'package:project1/features/app/user_auth/presentation/pages/admin/permissions/students/StudentsRequestsPage.dart'; // Import for controlling system UI
 
 class PermissionsPage extends StatefulWidget {
   final String collegeCode;
@@ -40,11 +41,15 @@ class _PermissionsPageState extends State<PermissionsPage> {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  _buildTabButton(0, 'Explore_Clubs'), // Tab for Clubs
+                  _buildTabButton(0, 'Students'),
+                  const SizedBox(width: 10),
+                  _buildTabButton(1, 'Clubs'), // Tab for Clubs
                   const SizedBox(width: 10), // Space between tabs
-                  _buildTabButton(1, 'Explore_Events'), // Tab for Events
+                  _buildTabButton(2, 'Events'), // Tab for Events
                   const SizedBox(width: 10), // Space between tabs
-                  _buildTabButton(2, 'Announcements'), // Tab for Announcements
+                  _buildTabButton(3, 'Announcements'), // Tab for Announcements
+                  const SizedBox(width: 10), // Space between tabs
+                   // Space between tabs
                 ],
               ),
             ),
@@ -59,6 +64,7 @@ class _PermissionsPageState extends State<PermissionsPage> {
                   });
                 },
                 children: [
+                  StudentsRequestsPage(collegeCode: widget.collegeCode),
                   ClubsRequestsPage(collegeCode: widget.collegeCode),
                   EventsRequestsPage(collegeCode: widget.collegeCode),
                   AnnouncementRequestsPage(collegeCode: widget.collegeCode),
