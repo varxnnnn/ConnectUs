@@ -32,10 +32,10 @@ class _CreateAnnouncementPageState extends State<CreateAnnouncementPage> {
   bool _isCreating = false;
   XFile? _attachmentImage; // To hold any attachment for the announcement
 
-  static const Color primaryColor = Color(0xFF1F2628);
-  static const Color secondaryColor = Color(0xFFF9AA33);
+  static const Color primaryColor = Color(0xFFECE6E6);
+  static const Color secondaryColor = Color(0xFFA60000);
   static const Color grayColor = Color(0xFF4A6572);
-  static const Color darkColor = Colors.white;
+  static const Color darkColor = Colors.black;
 
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();

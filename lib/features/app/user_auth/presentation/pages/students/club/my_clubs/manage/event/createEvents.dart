@@ -153,7 +153,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
 
         Fluttertoast.showToast(
           msg: "Event requested successfully!",
-          backgroundColor: Color(0xFFF9AA33),
+          backgroundColor: Color(0xFFA60000),
           textColor: Colors.white,
         );
 
@@ -206,14 +206,14 @@ class _CreateEventPageState extends State<CreateEventPage> {
               if (_isPaidEvent) _buildUnderlinedTextInput('Enter Fee Amount', _admissionFeeController, keyboardType: TextInputType.number),
 
               _buildUnderlinedTextInput('Guests', _guestController),
-              _buildUnderlinedTextInput('Restrictions (if any)', _restrictionsController),
+              _buildUnderlinedTextInput('Application Links', _restrictionsController),
 
               _buildImagePicker('Select Event Poster', true, _eventPoster),
 
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _submitEvent,
-                style: ElevatedButton.styleFrom(backgroundColor: Color(0xFFF9AA33)), // Light secondary color
+                style: ElevatedButton.styleFrom(backgroundColor: Color(0xFFA60000)), // Light secondary color
                 child: const Text('Submit Event'),
               ),
             ],
@@ -233,7 +233,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
           labelText: label,
           border: UnderlineInputBorder(),
           focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Color(0xFFF9AA33)), // Highlight with the secondary color
+            borderSide: BorderSide(color: Color(0xFFA60000)), // Highlight with the secondary color
           ),
         ),
         validator: (value) => value == null || value.isEmpty ? 'Please enter $label' : null,
@@ -255,7 +255,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   hintText: 'Add an activity',
                   border: UnderlineInputBorder(),
                   focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFFF9AA33)), // Highlight with the secondary color
+                    borderSide: BorderSide(color: Color(0xFFA60000)), // Highlight with the secondary color
                   ),
                 ),
               ),
@@ -263,7 +263,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
             IconButton(
               icon: const Icon(Icons.add),
               onPressed: _addActivity,
-              color: Color(0xFFF9AA33), // Light secondary color for button
+              color: Color(0xFFA60000), // Light secondary color for button
             ),
           ],
         ),

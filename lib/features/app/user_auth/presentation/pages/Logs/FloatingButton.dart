@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'AdminLoginPage.dart';
 
 class FloatingAdminButton extends StatelessWidget {
-  static const Color secondaryColor = Color(0xFFF9AA33);
+  static const Color secondaryColor = Color(0xFFA60000);
 
   const FloatingAdminButton({Key? key}) : super(key: key);
 

@@ -15,7 +15,7 @@ class HomeAdminPage extends StatefulWidget {
 }
 
 class _HomeAdminPageState extends State<HomeAdminPage> {
-  // List of asset image names
+  // List of asset image names for the carousel slider
   final List<String> imageList = [
     'assets/1.jpg',
     'assets/2.jpg',
@@ -43,6 +43,16 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
     return snapshot.docs;
   }
 
+  // Fetch clubs from Firestore
+  Future<List<QueryDocumentSnapshot>> _fetchClubs() async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.collegeCode)
+        .collection('collegeClubs')
+        .get();
+    return snapshot.docs;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,7 +71,7 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
                     fontSize: 32,
                     fontFamily: 'Archivo',
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Color(0xFFA60000),
                   ),
                 ),
               ),
@@ -75,12 +85,26 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
                     fontSize: 32,
                     fontFamily: 'Archivo',
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Color(0xFFA60000),
                   ),
                 ),
               ),
               // Display list view of announcements
               _buildAnnouncementList(),
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  'Manage Clubs',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontFamily: 'Archivo',
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFFA60000),
+                  ),
+                ),
+              ),
+              // Display carousel of clubs
+              _buildClubCarousel(),
             ],
           ),
         ),
@@ -218,7 +242,7 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
             itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
               final announcementData = snapshot.data![index].data() as Map<String, dynamic>;
-              String title = announcementData['title'] ?? 'No Title';
+              String title = announcementData['subject'] ?? 'No Title';
               String content = announcementData['content'] ?? 'No Content';
 
               return Padding(
@@ -238,6 +262,81 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
                 ),
               );
             },
+          );
+        }
+      },
+    );
+  }
+
+  /// Builds the carousel slider for clubs
+  Widget _buildClubCarousel() {
+    return FutureBuilder<List<QueryDocumentSnapshot>>(
+      future: _fetchClubs(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return const Center(child: Text("Error loading clubs"));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text("No clubs available"));
+        } else {
+          return CarouselSlider.builder(
+            itemCount: snapshot.data!.length,
+            itemBuilder: (BuildContext context, int index, int realIndex) {
+              final clubData = snapshot.data![index].data() as Map<String, dynamic>;
+              String clubName = clubData['name'] ?? 'Unknown Club';
+              String clubLogoUrl = clubData['logoUrl'] ?? '';
+
+              return Stack(
+                children: [
+                  // Club Logo
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.network(
+                      clubLogoUrl,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
+                    ),
+                  ),
+                  // Overlay for text
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.black.withOpacity(0.8),
+                          Colors.transparent,
+                        ],
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                      ),
+                    ),
+                  ),
+                  // Club Name
+                  Positioned(
+                    bottom: 16,
+                    left: 16,
+                    right: 16,
+                    child: Text(
+                      clubName,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+            options: CarouselOptions(
+              height: 400,
+              autoPlay: true,
+              autoPlayInterval: const Duration(seconds: 3),
+              viewportFraction: 0.9,
+              enlargeCenterPage: true,
+            ),
           );
         }
       },

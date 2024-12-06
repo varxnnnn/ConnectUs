@@ -5,10 +5,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class ProfilePage extends StatelessWidget {
   ProfilePage({super.key});
 
-  static const Color primaryColor = Color(0xFF050505);
-  static const Color secondaryColor = Color(0xFFF9AA33);
+  static const Color primaryColor = Color(0xFFFFFDFD);
+  static const Color secondaryColor = Color(0xFFA60000);
   static const Color grayColor = Color(0xFF8A969B);
-  static const Color textColor = Color(0xFFEDEDED);
+  static const Color textColor = Color(0xFF050505);
 
   final Map<String, String> collegeNames = {
     'VGNT': 'Vignan',
@@ -115,7 +115,7 @@ class ProfilePage extends StatelessWidget {
                               "Branch: ${userData['branch'] ?? 'N/A'}",
                               style: TextStyle(
                                 fontSize: 16,
-                                color: Colors.white,
+                                color: Colors.black,
                               ),
                             ),
                           ],

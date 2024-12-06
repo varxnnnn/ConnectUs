@@ -10,7 +10,7 @@ class EventDetailPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(event['name'] ?? 'Event Details'),
-        backgroundColor: const Color(0xFF1F2628), // Dark primary color
+        backgroundColor: const Color(0xFFECE6E6), // Dark primary color
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -98,7 +98,7 @@ class EventDetailPage extends StatelessWidget {
                             },
                             child: Icon(
                               Icons.close,
-                              color: Colors.white,
+                              color: Colors.black,
                               size: 30,
                             ),
                           ),
@@ -120,13 +120,13 @@ class EventDetailPage extends StatelessWidget {
           image: posterUrl != null
               ? DecorationImage(image: NetworkImage(posterUrl), fit: BoxFit.cover)
               : null,
-          color: const Color(0xFF7D7F88), // Gray fallback color
+          color: const Color(0xFF050505), // Gray fallback color
         ),
         child: posterUrl == null
             ? const Center(
           child: Text(
             'No Poster Available',
-            style: TextStyle(color: Colors.white, fontSize: 16),
+            style: TextStyle(color: Colors.black, fontSize: 16),
           ),
         )
             : null,
@@ -139,7 +139,7 @@ class EventDetailPage extends StatelessWidget {
     return Text(
       title,
       style: const TextStyle(
-        color: Color(0xFFF9AA33), // Secondary color
+        color: Color(0xFFA60000), // Secondary color
         fontSize: 18,
         fontWeight: FontWeight.bold,
       ),
@@ -156,7 +156,7 @@ class EventDetailPage extends StatelessWidget {
           Text(
             label,
             style: const TextStyle(
-              color: Colors.white,
+              color: Colors.black,
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
@@ -191,7 +191,7 @@ class EventDetailPage extends StatelessWidget {
     if (activities.isEmpty) {
       return const Text(
         'No activities available.',
-        style: TextStyle(color: Colors.white, fontSize: 16),
+        style: TextStyle(color: Colors.black, fontSize: 16),
       );
     }
 
@@ -206,7 +206,7 @@ class EventDetailPage extends StatelessWidget {
               const Text(
                 '•', // Unicode bullet character
                 style: TextStyle(
-                  color: Color(0xFFF9AA33), // Secondary color
+                  color: Color(0xFFA60000), // Secondary color
                   fontSize: 18,
                 ),
               ),
@@ -214,7 +214,7 @@ class EventDetailPage extends StatelessWidget {
               Expanded(
                 child: Text(
                   activity,
-                  style: const TextStyle(color: Colors.white, fontSize: 16),
+                  style: const TextStyle(color: Colors.black, fontSize: 16),
                 ),
               ),
             ],

@@ -28,7 +28,7 @@ class AnnouncementDetailsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Announcement Details'),
-        backgroundColor: Colors.teal,
+        backgroundColor: Color(0xFFECE6E6),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -36,7 +36,7 @@ class AnnouncementDetailsPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Subject: $subject', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.teal)),
+              Text('Subject: $subject', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFFA60000))),
               const SizedBox(height: 8),
               Text('Created on: $formattedDate', style: const TextStyle(fontSize: 16, color: Colors.grey)),
               const SizedBox(height: 16),

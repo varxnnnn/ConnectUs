@@ -25,9 +25,9 @@ class _LoginPageState extends State<LoginPage> {
   bool _isLoadingCodes = true; // Added for loading state
 
   static const Color primaryColor = Color(0xFF1F2628);
-  static const Color secondaryColor = Color(0xFFF9AA33);
+  static const Color secondaryColor = Color(0xFFA60000);
   static const Color grayColor = Color(0xFF4A6572);
-  static const Color darkColor = Colors.white;
+  static const Color darkColor = Colors.black;
 
   List<String> collegeCodes = [];
   String? selectedCollegeCode;
@@ -81,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text(
-                "Login",
+                "Student Login",
                 style: TextStyle(fontSize: 27, fontWeight: FontWeight.bold, color: secondaryColor),
               ),
               const SizedBox(height: 30),
@@ -106,7 +106,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   child: Center(
                     child: _isLoggingIn
-                        ? const CircularProgressIndicator(color: Colors.white)
+                        ? const CircularProgressIndicator(color: Color(0xFFA60000))
                         : const Text(
                       "Login",
                       style: TextStyle(
@@ -206,7 +206,7 @@ class _LoginPageState extends State<LoginPage> {
           child: Text(
             actionText,
             style: const TextStyle(
-              color: Colors.white,
+              color: Color(0xFFA60000),
               fontWeight: FontWeight.bold,
             ),
           ),

@@ -108,7 +108,12 @@ class AnnouncementDetailsPage extends StatelessWidget {
 
         if (announcementRequestDoc.exists) {
           // Remove the announcement from the announcementRequests collection
-          await firestore.collection('users').doc(collegeCode).collection('announcementRequests').doc(documentId).delete();
+          await firestore
+              .collection('users')
+              .doc(collegeCode)
+              .collection('announcementRequests')
+              .doc(documentId)
+              .delete();
         } else {
           print('Document not found in announcementRequests: $documentId');
         }
@@ -125,7 +130,7 @@ class AnnouncementDetailsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Announcement Details'),
-        backgroundColor: Colors.teal, // AppBar color for a fresh look
+        backgroundColor: Color(0xFFA60000), // AppBar color for a fresh look
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -136,7 +141,7 @@ class AnnouncementDetailsPage extends StatelessWidget {
               // Display Subject
               Text(
                 'Subject: $subject',
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.teal),
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFFA60000)),
               ),
               const SizedBox(height: 8),
 

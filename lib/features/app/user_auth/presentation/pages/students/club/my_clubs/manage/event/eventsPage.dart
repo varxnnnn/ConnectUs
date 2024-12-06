@@ -33,7 +33,7 @@ class EventsPage extends StatelessWidget {
             ),
           );
         },
-        backgroundColor: Colors.orangeAccent,
+        backgroundColor: Color(0xFFA60000),
         child: const Icon(Icons.add),
       ),
       body: StreamBuilder<QuerySnapshot>(

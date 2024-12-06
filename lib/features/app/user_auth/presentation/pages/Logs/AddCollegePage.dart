@@ -26,9 +26,9 @@ class _AddCollegePageState extends State<AddCollegePage> {
   String? _logoUrl;
 
   static const Color primaryColor = Color(0xFF1F2628);
-  static const Color secondaryColor = Color(0xFFF9AA33);
+  static const Color secondaryColor = Color(0xFFA60000);
   static const Color grayColor = Color(0xFF4A6572);
-  static const Color darkColor = Colors.white;
+  static const Color darkColor = Colors.black;
 
   @override
   void dispose() {
@@ -189,6 +189,8 @@ class _AddCollegePageState extends State<AddCollegePage> {
 
       // Show success message
       _showToast(message: "College added successfully!");
+
+      Navigator.pop(context);
 
       // Clear the input fields and reset the logo file
       _collegeNameController.clear();

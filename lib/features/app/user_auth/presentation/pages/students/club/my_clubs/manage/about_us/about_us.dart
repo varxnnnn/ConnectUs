@@ -19,7 +19,7 @@ class about_us extends StatelessWidget {
     String createdAt = _formatDate(clubDetails['createdAt']);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF1C1C1E), // Dark background color
+      backgroundColor: const Color(0xFFFFFDFD), // Dark background color
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -39,7 +39,7 @@ class about_us extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Colors.black,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -47,7 +47,7 @@ class about_us extends StatelessWidget {
                     Container(
                       height: 2,
                       width: 100,
-                      color: const Color(0xFFF9AA33), // Accent color divider
+                      color: const Color(0xFFA60000), // Accent color divider
                     ),
                   ],
                 ),
@@ -93,7 +93,7 @@ class about_us extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black45,
+            color: Colors.white,
             blurRadius: 10,
             offset: Offset(0, 4),
           ),
@@ -118,7 +118,7 @@ class about_us extends StatelessWidget {
       children: [
         Icon(
           icon,
-          color: const Color(0xFFF9AA33), // Accent color for icons
+          color: const Color(0xFFA60000), // Accent color for icons
           size: 28,
         ),
         const SizedBox(width: 12),
@@ -131,7 +131,7 @@ class about_us extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
               ),
               const SizedBox(height: 4),
@@ -139,7 +139,7 @@ class about_us extends StatelessWidget {
                 content,
                 style: const TextStyle(
                   fontSize: 16,
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
               ),
             ],

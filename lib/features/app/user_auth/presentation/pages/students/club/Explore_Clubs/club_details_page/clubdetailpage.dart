@@ -183,13 +183,13 @@ class _ClubDetailsPageState extends State<ClubDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF101112),
+      backgroundColor: const Color(0xFFFFFDFD),
       appBar: AppBar(
         title: Text(
           widget.clubDetails['name'] ?? 'Club Details',
-          style: const TextStyle(color: Color(0xFFF9AA33)),
+          style: const TextStyle(color: Color(0xFF050505)),
         ),
-        backgroundColor: const Color(0xFF101112),
+        backgroundColor: const Color(0xFFECE6E6),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -240,7 +240,7 @@ class _ClubDetailsPageState extends State<ClubDetailsPage> {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
           color: _selectedTabIndex == index
-              ? const Color(0xFFF9AA33)
+              ? const Color(0xFFA60000)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(25),
         ),
@@ -248,8 +248,8 @@ class _ClubDetailsPageState extends State<ClubDetailsPage> {
           label,
           style: TextStyle(
             color: _selectedTabIndex == index
-                ? Colors.black
-                : const Color(0xFFF9AA33),
+                ? Colors.white
+                : const Color(0xFFA60000),
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
@@ -320,19 +320,19 @@ class _ClubDetailsPageState extends State<ClubDetailsPage> {
                 style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFFF9AA33),
+                  color: Color(0xFFA60000),
                 ),
               ),
               const SizedBox(height: 10),
               Row(
                 children: [
-                  const Icon(Icons.category, color: Color(0xFFF9AA33), size: 20),
+                  const Icon(Icons.category, color: Color(0xFFA60000), size: 20),
                   const SizedBox(width: 5),
                   Text(
                     widget.clubDetails['category'] ?? 'Uncategorized',
                     style: const TextStyle(
                       fontSize: 18,
-                      color: Colors.white,
+                      color: Colors.black,
                     ),
                   ),
                 ],
@@ -340,39 +340,39 @@ class _ClubDetailsPageState extends State<ClubDetailsPage> {
               const SizedBox(height: 8),
               Row(
                 children: [
-                  const Icon(Icons.access_time, color: Color(0xFFF9AA33), size: 20),
+                  const Icon(Icons.access_time, color: Color(0xFFA60000), size: 20),
                   const SizedBox(width: 5),
                   Text(
                     'Established since ${_formatDate(widget.clubDetails['createdAt'])}',
-                    style: const TextStyle(fontSize: 16, color: Colors.white),
+                    style: const TextStyle(fontSize: 16, color: Colors.black),
                   ),
                 ],
               ),
               const SizedBox(height: 12),
               Text(
                 'Description ',
-                style: const TextStyle(fontSize: 18, color: Color(0xFFF9AA33), fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 18, color: Color(0xFFA60000), fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 4),
               Text(
                 widget.clubDetails['description'] ?? 'No description provided',
-                style: const TextStyle(fontSize: 16, color: Colors.white),
+                style: const TextStyle(fontSize: 16, color: Colors.black),
               ),
               const SizedBox(height: 8),
               Text(
                 '${widget.collegeCode} - ${widget.clubDetails['collegeName'] ?? ''}',
-                style: const TextStyle(fontSize: 16, color: Colors.white),
+                style: const TextStyle(fontSize: 16, color: Colors.black),
               ),
               const SizedBox(height: 8),
               Text(
-                'Members Count : ${_memberCount ?? 0}',
-                style: const TextStyle(fontSize: 16, color: Colors.white),
+                'Members Countz : ${_memberCount ?? 0}',
+                style: const TextStyle(fontSize: 16, color: Colors.black),
               ),
             ],
           ),
         ),
         const SizedBox(height: 15),
-        _buildSectionHeader('Admin Information', const Color(0xFFF9AA33)),
+        _buildSectionHeader('Admin Information', const Color(0xFFA60000)),
         const SizedBox(height: 16),
         _buildAdminInfo(
           widget.clubDetails['adminProfilePic'],
@@ -384,7 +384,7 @@ class _ClubDetailsPageState extends State<ClubDetailsPage> {
         ElevatedButton(
           onPressed: _joinClub,
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFF9AA33),
+            backgroundColor: const Color(0xFFA60000),
             padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 10),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
@@ -392,7 +392,7 @@ class _ClubDetailsPageState extends State<ClubDetailsPage> {
           ),
           child: const Text(
             'Join Club',
-            style: TextStyle(fontSize: 18, color: Colors.black),
+            style: TextStyle(fontSize: 18, color: Colors.white),
           ),
         ),
       ],
@@ -416,7 +416,7 @@ class _ClubDetailsPageState extends State<ClubDetailsPage> {
         const SizedBox(width: 10),
         Text(
           title,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
         ),
       ],
     );
@@ -435,17 +435,17 @@ class _ClubDetailsPageState extends State<ClubDetailsPage> {
           children: [
             Text(
               name ?? 'Admin',
-              style: const TextStyle(fontSize: 18, color: Colors.white),
+              style: const TextStyle(fontSize: 18, color: Colors.black),
             ),
             const SizedBox(height: 4),
             Text(
               'Branch: $branch',
-              style: const TextStyle(fontSize: 16, color: Colors.white),
+              style: const TextStyle(fontSize: 16, color: Colors.black),
             ),
             const SizedBox(height: 4),
             Text(
               'Roll No: $rollNumber',
-              style: const TextStyle(fontSize: 16, color: Colors.white),
+              style: const TextStyle(fontSize: 16, color: Colors.black),
             ),
           ],
         ),

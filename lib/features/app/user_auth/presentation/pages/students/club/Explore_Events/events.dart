@@ -140,7 +140,7 @@ class _AllEventsState extends State<AllEvents> {
                     ),
                     selected: isSelected,
                     onSelected: (_) => _onCollegeCodeSelected(code),
-                    selectedColor: Colors.orangeAccent,
+                    selectedColor: Color(0xFFA60000),
                     backgroundColor: Colors.grey[200],
                   ),
                 );

@@ -74,8 +74,8 @@ class _ClubsPageState extends State<ClubsPage> {
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         decoration: BoxDecoration(
           color: _selectedOptionIndex == index
-              ? const Color(0xFFF9AA33) // Highlight color if selected
-              : const Color(0xFF1E2018), // Default color
+              ? const Color(0xFFA60000) // Highlight color if selected
+              : const Color(0xFF232322), // Default color
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: Colors.grey.shade700),
         ),

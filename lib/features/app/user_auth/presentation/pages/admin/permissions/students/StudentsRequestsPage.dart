@@ -21,9 +21,9 @@ class StudentsRequestsPage extends StatelessWidget {
                 Tab(text: 'My Students'),
                 Tab(text: 'Student Requests'),
               ],
-              indicatorColor: Colors.amber, // Bright indicator color
-              labelColor: Colors.orange, // Bright label color for active tabs
-              unselectedLabelColor: Colors.white, // Bright inactive tab color
+              indicatorColor: Color(0xFFA60000), // Bright indicator color
+              labelColor: Color(0xFFA60000), // Bright label color for active tabs
+              unselectedLabelColor: Colors.black, // Bright inactive tab color
               labelStyle: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
@@ -63,6 +63,7 @@ class MyStudentsTab extends StatelessWidget {
           .collection('users')
           .doc(collegeCode)
           .collection('students')
+          .where('verification', isEqualTo: 'Verified')
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -97,7 +98,7 @@ class MyStudentsTab extends StatelessWidget {
               ),
               title: Text(
                 studentName,
-                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
               ),
               subtitle: Text(
                 'Roll Number: $studentRollNumber',
@@ -170,7 +171,7 @@ class StudentRequestsTab extends StatelessWidget {
               ),
               title: Text(
                 studentName,
-                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
               ),
               subtitle: Text(
                 'Roll Number: $studentRollNumber',

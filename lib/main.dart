@@ -3,9 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:project1/features/app/user_auth/presentation/pages/mainScreen.dart';
+import 'features/app/user_auth/presentation/pages/Logs/login_page.dart';
 import 'features/app/user_auth/presentation/pages/Logs/splash.dart';
 import 'features/app/user_auth/presentation/pages/students/chatBot/consts.dart';
-import 'features/app/user_auth/presentation/pages/Logs/login_page.dart';
 import 'features/app/user_auth/presentation/pages/Logs/sign_up_page.dart';
 
 void main() async {
@@ -39,9 +39,9 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   // Define your custom colors
-  static const Color primaryColor = Color(0xFF090909); // Dark primary color
-  static const Color secondaryColor = Color(0xFFF9AA33);
-  static const Color darkColor = Colors.white; // Text on dark backgrounds
+  static const Color primaryColor = Colors.white; // Dark primary color
+  static const Color secondaryColor = Color(0xFFA60000);
+  static const Color darkColor = Color(0xFF090909); // Text on dark backgrounds
   static const Color grayColor = Color(0xFF7D7F88); // Gray for secondary text
   static const Color accentColor = Color(0xFF7E6377); // Accent color for buttons
 

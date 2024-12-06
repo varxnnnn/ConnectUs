@@ -63,7 +63,7 @@ class _HotPageState extends State<HotPage> {
                     fontSize: 32,
                     fontFamily: 'Archivo',
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Color(0xFFA60000),
                   ),
                 ),
               ),
@@ -76,7 +76,7 @@ class _HotPageState extends State<HotPage> {
                     fontSize: 32,
                     fontFamily: 'Archivo',
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Color(0xFFA60000),
                   ),
                 ),
               ),
@@ -89,7 +89,7 @@ class _HotPageState extends State<HotPage> {
                     fontSize: 32,
                     fontFamily: 'Archivo',
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Color(0xFFA60000),
                   ),
                 ),
               ),
@@ -150,7 +150,7 @@ class _HotPageState extends State<HotPage> {
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1E2018),
+                      color: const Color(0xFFFFFDFD),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: TextButton(
@@ -159,7 +159,7 @@ class _HotPageState extends State<HotPage> {
                       },
                       child: const Text(
                         'See More',
-                        style: TextStyle(fontSize: 18, color: Colors.white),
+                        style: TextStyle(fontSize: 18, color: Color(0xFFA60000)),
                       ),
                     ),
                   ),
@@ -309,7 +309,7 @@ class _HotPageState extends State<HotPage> {
     String truncatedContent = content.length > 50 ? '${content.substring(0, 50)}...' : content;
 
     return Card(
-      color: const Color(0xFF1E2018),
+      color: const Color(0xFFECE6E6),
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: ListTile(
         contentPadding: const EdgeInsets.all(16.0),
@@ -318,7 +318,7 @@ class _HotPageState extends State<HotPage> {
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: Color(0xFFA60000),
           ),
         ),
         subtitle: Column(
@@ -328,7 +328,7 @@ class _HotPageState extends State<HotPage> {
               'Club: $clubName',
               style: const TextStyle(
                 fontSize: 14,
-                color: Colors.white70,
+                color: Color(0xFFA60000),
               ),
             ),
             const SizedBox(height: 8),
@@ -336,7 +336,7 @@ class _HotPageState extends State<HotPage> {
               truncatedContent,
               style: const TextStyle(
                 fontSize: 14,
-                color: Colors.white70,
+                color: Color(0xFFA60000),
               ),
             ),
           ],

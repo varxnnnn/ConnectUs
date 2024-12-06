@@ -59,7 +59,8 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Color(0xFFF9AA33), // Change selected item color to 0xFFF9AA33
+        selectedItemColor: Color(0xFFA60000),
+        unselectedItemColor: Color(0xFF333337),// Change selected item color to 0xFFF9AA33
         onTap: _onItemTapped,
       ),
     );

@@ -51,7 +51,7 @@ class AnnouncementsPage extends StatelessWidget {
               return Column(
                 children: [
                   ListTile(
-                    leading: const Icon(Icons.announcement, color: Colors.orange),  // Icon for announcement
+                    leading: const Icon(Icons.announcement, color: Color(0xFFA60000)),  // Icon for announcement
                     title: Text(subject, style: const TextStyle(fontWeight: FontWeight.bold)),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

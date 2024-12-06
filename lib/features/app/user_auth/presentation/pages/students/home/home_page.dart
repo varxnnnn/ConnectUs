@@ -115,7 +115,7 @@ class _HomePageState extends State<HomePage> {
                     fontSize: 32,
                     fontFamily: 'Archivo',
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Color(0xFFA60000),
                   ),
                 ),
               ),
@@ -131,7 +131,7 @@ class _HomePageState extends State<HomePage> {
                     fontSize: 32,
                     fontFamily: 'Archivo',
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Color(0xFFA60000),
                   ),
                 ),
               ),
@@ -146,7 +146,7 @@ class _HomePageState extends State<HomePage> {
                     fontSize: 32,
                     fontFamily: 'Archivo',
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Color(0xFFA60000),
                   ),
                 ),
               ),
@@ -160,7 +160,7 @@ class _HomePageState extends State<HomePage> {
                     fontSize: 32,
                     fontFamily: 'Archivo',
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Color(0xFFA60000),
                   ),
                 ),
               ),
@@ -314,7 +314,7 @@ class _HomePageState extends State<HomePage> {
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1E2018), // Background color
+                      color: const Color(0xFFFFFDFD), // Background color
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: TextButton(
@@ -331,7 +331,7 @@ class _HomePageState extends State<HomePage> {
                       child: const Text(
                         'See More',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Color(0xFFA60000),
                           fontSize: 18,
                         ),
                       ),
@@ -458,7 +458,7 @@ class _HomePageState extends State<HomePage> {
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18, // Larger font size
-                                color: Colors.white,
+                                color: Colors.black,
                               ),
                             ),
                           ],
@@ -496,12 +496,13 @@ class _HomePageState extends State<HomePage> {
             itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
               final announcementData = snapshot.data![index].data() as Map<String, dynamic>;
-              String title = announcementData['title'] ?? 'No Title';
+              String title = announcementData['subject'] ?? 'No Subject';
               String content = announcementData['content'] ?? 'No Content';
 
               return Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Card(
+                  color: const Color(0xFFECE6E6),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),

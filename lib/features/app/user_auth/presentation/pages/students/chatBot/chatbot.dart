@@ -45,8 +45,17 @@ class _HomePageState extends State<ChatBotScreen> {
           IconButton(
             onPressed: _sendMediaMessage,
             icon: const Icon(Icons.image),
+            color: Color(0xFFA60000), // Set the send button color
+
           ),
         ],
+        sendButtonBuilder: (void Function() onSend) {
+          return IconButton(
+            onPressed: onSend,
+            icon: const Icon(Icons.send),
+            color: Color(0xFFA60000), // Set the send button color
+          );
+        },
       ),
       currentUser: currentUser,
       onSend: _sendMessage,
