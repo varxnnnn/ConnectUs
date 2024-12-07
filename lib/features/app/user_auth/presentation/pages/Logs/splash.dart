@@ -47,7 +47,7 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Text(
           "Welcome to Connect US",
           style: TextStyle(
-            color: Colors.blue,
+            color: Color(0xFFA60000),
             fontWeight: FontWeight.bold,
             fontSize: 24,
           ),

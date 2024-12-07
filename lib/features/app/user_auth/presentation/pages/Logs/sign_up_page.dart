@@ -277,7 +277,7 @@ class _SignUpPageState extends State<SignUpPage> {
           borderSide: BorderSide(color: secondaryColor, width: 2),
         ),
       ),
-      style: const TextStyle(color: Colors.white),
+      style: const TextStyle(color: Colors.black),
     );
   }
 
