@@ -89,12 +89,40 @@ class _CreateEventPageState extends State<CreateEventPage> {
     }
   }
 
+  Future<void> _selectDate() async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+
+    if (picked != null && picked != DateTime.now()) {
+      setState(() {
+        _eventDateController.text = "${picked.toLocal()}".split(' ')[0];
+      });
+    }
+  }
+
+  Future<void> _selectTime() async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (picked != null) {
+      setState(() {
+        _eventTimeController.text = "${picked.format(context)}";
+      });
+    }
+  }
+
   Future<void> _submitEvent() async {
     if (_formKey.currentState?.validate() ?? false) {
       String? posterUrl;
 
       if (_eventPoster != null) {
-        posterUrl = await _uploadImage(_eventPoster!, 'events/${widget.collegeCode}/${widget.rollNumber}/poster.jpg');
+        posterUrl = await _uploadImage(_eventPoster!, 'events/${widget.collegeCode}/${widget.rollNumber}/${_eventNameController.text}_poster.jpg');
       }
 
       final eventData = {
@@ -125,7 +153,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
 
         Fluttertoast.showToast(
           msg: "Event requested successfully!",
-          backgroundColor: Colors.green,
+          backgroundColor: Color(0xFFA60000),
           textColor: Colors.white,
         );
 
@@ -153,8 +181,18 @@ class _CreateEventPageState extends State<CreateEventPage> {
           child: ListView(
             children: [
               _buildUnderlinedTextInput('Event Name', _eventNameController),
-              _buildUnderlinedTextInput('Event Date (e.g., 2024-09-30)', _eventDateController),
-              _buildUnderlinedTextInput('Event Time (e.g., 3:00 PM)', _eventTimeController),
+              GestureDetector(
+                onTap: _selectDate,  // Date picker on tap
+                child: AbsorbPointer(
+                  child: _buildUnderlinedTextInput('Event Date (Tap to select)', _eventDateController),
+                ),
+              ),
+              GestureDetector(
+                onTap: _selectTime,  // Time picker on tap
+                child: AbsorbPointer(
+                  child: _buildUnderlinedTextInput('Event Time (Tap to select)', _eventTimeController),
+                ),
+              ),
               _buildUnderlinedTextInput('Venue', _venueController),
 
               _buildActivitiesSection(),
@@ -168,14 +206,14 @@ class _CreateEventPageState extends State<CreateEventPage> {
               if (_isPaidEvent) _buildUnderlinedTextInput('Enter Fee Amount', _admissionFeeController, keyboardType: TextInputType.number),
 
               _buildUnderlinedTextInput('Guests', _guestController),
-              _buildUnderlinedTextInput('Restrictions (if any)', _restrictionsController),
+              _buildUnderlinedTextInput('Application Links', _restrictionsController),
 
               _buildImagePicker('Select Event Poster', true, _eventPoster),
 
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _submitEvent,
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.orangeAccent),
+                style: ElevatedButton.styleFrom(backgroundColor: Color(0xFFA60000)), // Light secondary color
                 child: const Text('Submit Event'),
               ),
             ],
@@ -195,7 +233,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
           labelText: label,
           border: UnderlineInputBorder(),
           focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.orangeAccent),
+            borderSide: BorderSide(color: Color(0xFFA60000)), // Highlight with the secondary color
           ),
         ),
         validator: (value) => value == null || value.isEmpty ? 'Please enter $label' : null,
@@ -217,7 +255,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   hintText: 'Add an activity',
                   border: UnderlineInputBorder(),
                   focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.orangeAccent),
+                    borderSide: BorderSide(color: Color(0xFFA60000)), // Highlight with the secondary color
                   ),
                 ),
               ),
@@ -225,39 +263,38 @@ class _CreateEventPageState extends State<CreateEventPage> {
             IconButton(
               icon: const Icon(Icons.add),
               onPressed: _addActivity,
+              color: Color(0xFFA60000), // Light secondary color for button
             ),
           ],
         ),
+        const SizedBox(height: 10),
         Wrap(
-          children: _activities.map((activity) => Chip(label: Text(activity))).toList(),
+          spacing: 8.0,
+          runSpacing: 4.0,
+          children: _activities.map((activity) {
+            return Chip(label: Text(activity));
+          }).toList(),
         ),
-        const SizedBox(height: 16),
       ],
     );
   }
 
-  Widget _buildImagePicker(String label, bool isPoster, File? image) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
-        InkWell(
-          onTap: () => _pickImage(isPoster),
-          child: Container(
-            height: 150,
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(8),
-              image: image != null
-                  ? DecorationImage(image: FileImage(image), fit: BoxFit.cover)
-                  : null,
-            ),
-            child: image == null ? const Center(child: Text("Tap to select image")) : null,
-          ),
+  Widget _buildImagePicker(String label, bool isPoster, File? imageFile) {
+    return GestureDetector(
+      onTap: () => _pickImage(isPoster),
+      child: Container(
+        padding: const EdgeInsets.all(8.0),
+        color: Color(0xFF7E6377), // Dark color for the image picker container
+        child: Column(
+          children: [
+            Text(label, style: TextStyle(color: Colors.white)),
+            const SizedBox(height: 10),
+            imageFile == null
+                ? const Icon(Icons.add_a_photo, color: Colors.white)
+                : Image.file(imageFile, width: 100, height: 100),
+          ],
         ),
-        const SizedBox(height: 16),
-      ],
+      ),
     );
   }
 }

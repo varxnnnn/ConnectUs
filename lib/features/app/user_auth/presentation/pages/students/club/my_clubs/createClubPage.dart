@@ -40,10 +40,10 @@ class _CreateClubPageState extends State<CreateClubPage> {
     'Debate',
   ];
 
-  static const Color primaryColor = Color(0xFF1F2628);
-  static const Color secondaryColor = Color(0xFFF9AA33);
+  static const Color primaryColor = Color(0xFFECE6E6);
+  static const Color secondaryColor = Color(0xFFA60000);
   static const Color grayColor = Color(0xFF4A6572);
-  static const Color darkColor = Colors.white;
+  static const Color darkColor = Colors.black;
 
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
@@ -226,6 +226,7 @@ class _CreateClubPageState extends State<CreateClubPage> {
   Widget _buildCategoryDropdown() {
     return DropdownButtonFormField<String>(
       value: _selectedCategory,
+      dropdownColor: Colors.grey[200], // Set the dropdown list background color to light gray
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.transparent,
@@ -239,7 +240,10 @@ class _CreateClubPageState extends State<CreateClubPage> {
       items: categories.map((String category) {
         return DropdownMenuItem<String>(
           value: category,
-          child: Text(category, style: TextStyle(color: darkColor)),
+          child: Text(
+            category,
+            style: const TextStyle(color: Colors.black), // Set dropdown text color to black
+          ),
         );
       }).toList(),
       onChanged: (value) {
@@ -247,6 +251,8 @@ class _CreateClubPageState extends State<CreateClubPage> {
           _selectedCategory = value!;
         });
       },
+      style: const TextStyle(color: Colors.black), // Set the selected value's text color to black
     );
   }
+
 }

@@ -55,7 +55,7 @@ class _ManageClubPageState extends State<ManageClubPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         decoration: BoxDecoration(
-          color: _currentIndex == index ? const Color(0xFFF9AA33) : Colors.grey[300],
+          color: _currentIndex == index ? const Color(0xFFA60000) : Colors.grey[300],
           borderRadius: BorderRadius.circular(20.0),
         ),
         child: Text(
@@ -81,7 +81,7 @@ class _ManageClubPageState extends State<ManageClubPage> {
               children: [
                 _buildTabButton(0, 'About Us'),
                 const SizedBox(width: 10),
-                _buildTabButton(1, 'Explore_Events'),
+                _buildTabButton(1, 'Events'),
                 const SizedBox(width: 10),
                 _buildTabButton(2, 'Announcements'),
               ],

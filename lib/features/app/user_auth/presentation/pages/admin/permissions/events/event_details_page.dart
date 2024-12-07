@@ -69,6 +69,7 @@ class EventDetailsPage extends StatelessWidget {
           'date': event['date'],
           'time': event['time'],
           'venue': event['venue'],
+          'collagecode' : collegeCode,
           'posterUrl': event['posterUrl'],
           'clubName': event['clubName'],
           'clubAdmin': event['clubAdmin'],
@@ -93,6 +94,7 @@ class EventDetailsPage extends StatelessWidget {
           'date': event['date'],
           'time': event['time'],
           'venue': event['venue'],
+          'collagecode' : collegeCode,
           'posterUrl': event['posterUrl'],
           'clubName': event['clubName'],
           'clubAdmin': event['clubAdmin'],
@@ -115,6 +117,7 @@ class EventDetailsPage extends StatelessWidget {
           'date': event['date'],
           'time': event['time'],
           'venue': event['venue'],
+          'collagecode' : collegeCode,
           'posterUrl': event['posterUrl'],
           'clubName': event['clubName'],
           'clubAdmin': event['clubAdmin'],
@@ -135,6 +138,7 @@ class EventDetailsPage extends StatelessWidget {
           'date': event['date'],
           'time': event['time'],
           'venue': event['venue'],
+          'collagecode' : collegeCode,
           'posterUrl': event['posterUrl'],
           'clubName': event['clubName'],
           'clubAdmin': event['clubAdmin'],
@@ -157,6 +161,7 @@ class EventDetailsPage extends StatelessWidget {
           'date': event['date'],
           'time': event['time'],
           'venue': event['venue'],
+          'collagecode' : collegeCode,
           'posterUrl': event['posterUrl'],
           'clubName': event['clubName'],
           'clubAdmin': event['clubAdmin'],
@@ -177,6 +182,7 @@ class EventDetailsPage extends StatelessWidget {
           .doc(eventId)
           .delete();
 
+      Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Event Successfully updated to $status')),
       );
@@ -232,32 +238,49 @@ class EventDetailsPage extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: ListView(
               children: [
+                // Event Poster Section
                 if (eventPosterUrl != null)
                   Image.network(eventPosterUrl, fit: BoxFit.cover),
                 const SizedBox(height: 16),
-                Text('Event Name: $eventName', style: Theme.of(context).textTheme.titleLarge),
+
+                // Event Details Section
+                Text('Event Details',style: Theme.of(context).textTheme.titleLarge),
+                const Divider(),
+                Text('Event Name: $eventName', style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 8),
-                Text('Date: $eventDate'),
+                Text('Event Date: $eventDate'),
                 Text('Time: $eventTime'),
                 Text('Venue: $eventVenue'),
                 const SizedBox(height: 16),
-                Text('Club: $clubName'),
-                Text('Admin: $clubAdmin'),
-                if (clubLogoUrl != null) ...[
-                  const SizedBox(height: 8),
-                  CircleAvatar(backgroundImage: NetworkImage(clubLogoUrl), radius: 30),
-                ],
-                const SizedBox(height: 16),
+
+                // Event Additional Information Section
+                Text('Event Information', style: Theme.of(context).textTheme.titleLarge),
+                const Divider(),
                 Text('Admission Fee: $admissionFee'),
                 Text('Guests: $guests'),
                 Text('Restrictions: $restrictions'),
                 const SizedBox(height: 16),
+
+                // Club Details Section
+                Text('Club Details', style: Theme.of(context).textTheme.titleLarge),
+                const Divider(),
+                Text('Club: $clubName'),
+                Text('Admin: $clubAdmin'),
+                if (clubLogoUrl != null) ...[
+                  const SizedBox(height: 8),
+                  CircleAvatar(backgroundImage: NetworkImage(clubLogoUrl), radius: 120),
+                ],
+                const SizedBox(height: 16),
+
+                // Activities Section
                 if (activities.isNotEmpty) ...[
                   const SizedBox(height: 8),
                   Text('Activities:', style: Theme.of(context).textTheme.titleLarge),
                   ...activities.map((activity) => Text(activity)).toList(),
                 ],
                 const SizedBox(height: 16),
+
+                // Action Buttons Section
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [

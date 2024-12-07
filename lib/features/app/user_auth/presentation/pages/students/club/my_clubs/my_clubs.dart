@@ -184,17 +184,53 @@ class _MyClubsPageState extends State<MyClubsPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => CreateClubPage(collegeCode: widget.collegeCode),
-            ),
-          );
+        onPressed: () async {
+          try {
+            // Fetch the user's verification status
+            final studentDoc = await FirebaseFirestore.instance
+                .collection('users')
+                .doc(widget.collegeCode)
+                .collection('students')
+                .doc(widget.rollNumber)
+                .get();
+
+            if (!studentDoc.exists) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Student record not found.')),
+              );
+              return;
+            }
+
+            final studentData = studentDoc.data() as Map<String, dynamic>;
+            final verificationStatus = studentData['verification'] ?? 'Pending';
+
+            if (verificationStatus == 'Verified') {
+              // If verified, navigate to CreateClubPage
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CreateClubPage(
+                    collegeCode: widget.collegeCode,
+                  ),
+                ),
+              );
+            } else {
+              // If not verified, show an error message
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('You must be verified to create a club.')),
+              );
+            }
+          } catch (e) {
+            // Handle errors
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Error: $e')),
+            );
+          }
         },
         child: const Icon(Icons.add),
-        backgroundColor: const Color(0xFFF9AA33),
+        backgroundColor: const Color(0xFFA60000),
       ),
+
     );
   }
 }

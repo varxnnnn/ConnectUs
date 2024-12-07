@@ -32,10 +32,10 @@ class _CreateAnnouncementPageState extends State<CreateAnnouncementPage> {
   bool _isCreating = false;
   XFile? _attachmentImage; // To hold any attachment for the announcement
 
-  static const Color primaryColor = Color(0xFF1F2628);
-  static const Color secondaryColor = Color(0xFFF9AA33);
+  static const Color primaryColor = Color(0xFFECE6E6);
+  static const Color secondaryColor = Color(0xFFA60000);
   static const Color grayColor = Color(0xFF4A6572);
-  static const Color darkColor = Colors.white;
+  static const Color darkColor = Colors.black;
 
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
@@ -93,7 +93,8 @@ class _CreateAnnouncementPageState extends State<CreateAnnouncementPage> {
           'adminName': adminData['name'], // Admin name from Firestore
           'adminProfilePic': adminData['profilePictureUrl'], // Admin profile picture from Firestore
           'adminRollNumber': adminData['rollNumber'], // Admin's roll number from Firestore
-          'adminBranch': adminData['branch'], // Admin's branch from Firestore
+          'adminBranch': adminData['branch'],
+          'collegeCode': widget.collegeCode,// Admin's branch from Firestore
           'clubName': widget.clubDetails['name'], // Add club name from the clubDetails
           'clubAim': widget.clubDetails['aim'], // Add club aim from the clubDetails
           'clubCategory': widget.clubDetails['category'], // Add club category from the clubDetails

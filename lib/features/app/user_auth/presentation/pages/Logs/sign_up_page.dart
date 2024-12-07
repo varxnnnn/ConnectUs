@@ -37,17 +37,38 @@ class _SignUpPageState extends State<SignUpPage> {
   String? _selectedBranch;
 
   static const Color primaryColor = Color(0xFF1F2628);
-  static const Color secondaryColor = Color(0xFFF9AA33);
+  static const Color secondaryColor = Color(0xFFA60000);
   static const Color grayColor = Color(0xFF8A969B);
-  static const Color darkColor = Color(0xFFEDEDED);
+  static const Color darkColor = Colors.black;
 
-  final List<String> _collegeCodes = [
-    'VGNT', 'CMR', 'GRRR', 'MGIT', 'SNITS', 'HOLY'
-  ];
+  List<String> _collegeCodes = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCollegeCodes();
+  }
 
   final List<String> _branches = [
     'CSE', 'AIML', 'IT', 'MECH', 'DS', 'EEE', 'AI', 'ML'
   ];
+
+  Future<void> _fetchCollegeCodes() async {
+    try {
+      DocumentSnapshot snapshot = await _firestore.collection('codes')
+          .doc('allCodes')
+          .get();
+      if (snapshot.exists) {
+        List<dynamic> codes = snapshot.get('collegeCodes') ?? [];
+        setState(() {
+          _collegeCodes = List<String>.from(codes);
+        });
+      }
+    } catch (e) {
+      Fluttertoast.showToast( msg: 'Error fetching college codes: $e');
+    }
+  }
+
 
   @override
   void dispose() {
@@ -168,7 +189,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   child: Center(
                     child: _isSigningUp
-                        ? const CircularProgressIndicator(color: Colors.white)
+                        ? const CircularProgressIndicator(color: Color(0xFFA60000))
                         : const Text(
                       "Sign Up",
                       style: TextStyle(
@@ -248,7 +269,7 @@ class _SignUpPageState extends State<SignUpPage> {
       onChanged: onChanged,
       decoration: InputDecoration(
         filled: true,
-        fillColor: Colors.transparent,
+        fillColor: Color(0xFF333337),
         enabledBorder: UnderlineInputBorder(
           borderSide: BorderSide(color: grayColor),
         ),
@@ -256,13 +277,22 @@ class _SignUpPageState extends State<SignUpPage> {
           borderSide: BorderSide(color: secondaryColor, width: 2),
         ),
       ),
-      style: const TextStyle(color: darkColor),
+      style: const TextStyle(color: Colors.black),
     );
   }
 
   void _signUp() async {
-    if (_selectedCollegeCode == null || _selectedBranch == null) {
-      showToast(message: "Please select both college code and branch.");
+    if (_usernameController.text.trim().isEmpty ||
+        _bioController.text.trim().isEmpty ||
+        _locationController.text.trim().isEmpty ||
+        _emailController.text.trim().isEmpty ||
+        _phoneController.text.trim().isEmpty ||
+        _passwordController.text.trim().isEmpty ||
+        _rollNumberController.text.trim().isEmpty ||
+        _selectedCollegeCode == null ||
+        _selectedBranch == null ||
+        _profileImage == null) {
+      Fluttertoast.showToast( msg: 'All fields are mandatory. Please fill out all fields.');
       return;
     }
 
@@ -280,7 +310,7 @@ class _SignUpPageState extends State<SignUpPage> {
       String rollNumber = _rollNumberController.text;
 
       // Generate a random unique number for the image filename
-      int uniqueNumber = Random().nextInt(1000000); // Generate a random number
+      int uniqueNumber = Random().nextInt(1000000);
       if (_profileImage != null) {
         Reference storageRef = _firebaseStorage.ref().child('profile_images/$uniqueNumber');
         UploadTask uploadTask = storageRef.putFile(_profileImage!);
@@ -302,6 +332,8 @@ class _SignUpPageState extends State<SignUpPage> {
         'profilePictureUrl': _profileImageUrl,
         'bio': _bioController.text,
         'location': _locationController.text,
+        'verification': "Pending",
+        'uid': uid,
       });
 
       await _firestore.collection('allUsers').doc(uid).set({
@@ -314,15 +346,17 @@ class _SignUpPageState extends State<SignUpPage> {
         'profilePictureUrl': _profileImageUrl,
         'bio': _bioController.text,
         'location': _locationController.text,
+        'verification': "Pending",
+        'uid': uid,
       });
 
-      showToast(message: "Sign up successful!");
+      Fluttertoast.showToast(msg: 'Sign up successful!');
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const LoginPage()),
       );
     } on FirebaseAuthException catch (e) {
-      showToast(message: e.message ?? "An error occurred during sign-up.");
+      Fluttertoast.showToast(msg: 'An error occurred during sign-up.');
     } finally {
       setState(() {
         _isSigningUp = false;
@@ -330,7 +364,4 @@ class _SignUpPageState extends State<SignUpPage> {
     }
   }
 
-  void showToast({required String message}) {
-    Fluttertoast.showToast(msg: message);
-  }
 }

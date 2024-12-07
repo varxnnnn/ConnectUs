@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../admin/AdminDashboardPage.dart';
+import 'AddCollegePage.dart'; // Import AddCollegePage
+
 
 class AdminLoginPage extends StatefulWidget {
   const AdminLoginPage({super.key});
@@ -22,14 +24,35 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
   bool _isLoggingIn = false;
 
   String? _selectedCollegeCode; // Variable to hold selected college code
-  final List<String> _collegeCodes = [
-    'VGNT', 'CMR', 'GRRR', 'MGIT', 'SNITS', 'HOLY' // List of college codes
-  ];
+
+  List<String> _collegeCodes = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCollegeCodes();
+  }
+
+  Future<void> _fetchCollegeCodes() async {
+    try {
+      DocumentSnapshot snapshot = await _firestore.collection('codes')
+          .doc('allCodes')
+          .get();
+      if (snapshot.exists) {
+        List<dynamic> codes = snapshot.get('collegeCodes') ?? [];
+        setState(() {
+          _collegeCodes = List<String>.from(codes);
+        });
+      }
+    } catch (e) {
+      _showToast(message: "Error fetching college codes: $e");
+    }
+  }
 
   static const Color primaryColor = Color(0xFF121111);
-  static const Color secondaryColor = Color(0xFFF9AA33);
+  static const Color secondaryColor = Color(0xFFA60000);
   static const Color grayColor = Color(0xFF7D7F88);
-  static const Color darkColor = Colors.white;
+  static const Color darkColor = Colors.black;
 
   @override
   void dispose() {
@@ -69,7 +92,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                   ),
                   child: Center(
                     child: _isLoggingIn
-                        ? const CircularProgressIndicator(color: Colors.white)
+                        ? const CircularProgressIndicator(color: Color(0xFFA60000))
                         : const Text(
                       "Login",
                       style: TextStyle(
@@ -80,11 +103,11 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 30),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text("Don't have an account?", style: TextStyle(color: grayColor)),
+                  const Text("I'm a student", style: TextStyle(color: grayColor)),
                   const SizedBox(width: 5),
                   GestureDetector(
                     onTap: () {
@@ -93,12 +116,26 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
                     child: const Text(
                       "Back to Login",
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Color(0xFFA60000),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(height: 40),
+              // Add College button
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AddCollegePage()),
+                  );
+                },
+                child: const Text(
+                  "Add a College to Community",
+                  style: TextStyle(color: secondaryColor, fontWeight: FontWeight.bold),
+                ),
               ),
             ],
           ),

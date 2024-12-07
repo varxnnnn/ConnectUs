@@ -4,8 +4,9 @@ import 'club_details_page/clubdetailpage.dart';
 
 class AllClubsPage extends StatefulWidget {
   final String collegeCode;
+  final String CrollNumber;
 
-  const AllClubsPage({Key? key, required this.collegeCode}) : super(key: key);
+  const AllClubsPage({Key? key, required this.collegeCode, required this.CrollNumber,}) : super(key: key);
 
   @override
   _AllClubsPageState createState() => _AllClubsPageState();
@@ -94,12 +95,12 @@ class _AllClubsPageState extends State<AllClubsPage> {
           Card(
             color: Color(0xFFF0F0F0), // Light gray background similar to WhatsApp
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20), // Fully rounded corners
+              borderRadius: BorderRadius.circular(10), // Fully rounded corners
             ),
             elevation: 0, // No elevation for a flat look
             margin: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0.2),
+              padding: const EdgeInsets.symmetric(horizontal: 17.0, vertical: 0.2),
               child: Row(
                 children: [
                   const Icon(
@@ -146,7 +147,7 @@ class _AllClubsPageState extends State<AllClubsPage> {
                     ),
                     selected: isSelected,
                     onSelected: (_) => _onCollegeCodeSelected(code),
-                    selectedColor: Colors.orangeAccent,
+                    selectedColor: Color(0xFFA60000),
                     backgroundColor: Colors.grey[200],
                   ),
                 );
@@ -187,6 +188,7 @@ class _AllClubsPageState extends State<AllClubsPage> {
                             builder: (context) => ClubDetailsPage(
                               clubDetails: club,
                               clubId: clubId,
+                              CrollNumber: widget.CrollNumber,
                               collegeCode: widget.collegeCode,
                             ),
                           ),

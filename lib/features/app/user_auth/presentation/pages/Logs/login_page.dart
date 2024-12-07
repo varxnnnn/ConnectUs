@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import '../mainScreen.dart';
-import 'AdminLoginPage.dart';
+import 'FloatingButton.dart'; // Import the new FloatingButton.dart file
 import 'sign_up_page.dart';
+import '../mainScreen.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -22,18 +22,46 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController _rollNumberController = TextEditingController();
 
   bool _isLoggingIn = false;
+  bool _isLoadingCodes = true; // Added for loading state
 
   static const Color primaryColor = Color(0xFF1F2628);
-  static const Color secondaryColor = Color(0xFFF9AA33);
+  static const Color secondaryColor = Color(0xFFA60000);
   static const Color grayColor = Color(0xFF4A6572);
-  static const Color darkColor = Colors.white;
+  static const Color darkColor = Colors.black;
 
-  // List of College Codes
-  final List<String> collegeCodes = [
-    'VGNT', 'MGIT', 'HOLY', 'SNITS', 'GRRR', 'CMR'
-  ];
-
+  List<String> collegeCodes = [];
   String? selectedCollegeCode;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCollegeCodes(); // Fetch college codes when the page is initialized
+  }
+
+  Future<void> _fetchCollegeCodes() async {
+    try {
+      DocumentSnapshot doc = await _firestore.collection('codes').doc('allCodes').get();
+      if (doc.exists) {
+        // Cast the document data to Map<String, dynamic>
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+
+        setState(() {
+          // Safely access the 'collegeCodes' field
+          collegeCodes = List<String>.from(data['collegeCodes'] ?? []);
+          _isLoadingCodes = false; // Set loading state to false after data is fetched
+        });
+      } else {
+        setState(() {
+          _isLoadingCodes = false; // Set loading state to false if document doesn't exist
+        });
+      }
+    } catch (e) {
+      _showToast(message: "Failed to fetch college codes: $e");
+      setState(() {
+        _isLoadingCodes = false;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -53,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text(
-                "Login",
+                "Student Login",
                 style: TextStyle(fontSize: 27, fontWeight: FontWeight.bold, color: secondaryColor),
               ),
               const SizedBox(height: 30),
@@ -61,7 +89,9 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 10),
               _buildUnderlineTextField(_passwordController, 'Password', obscureText: true),
               const SizedBox(height: 10),
-              _buildCollegeCodeDropdown(),
+              _isLoadingCodes
+                  ? const CircularProgressIndicator() // Show loading indicator while fetching
+                  : _buildCollegeCodeDropdown(), // Show dropdown after data is fetched
               const SizedBox(height: 10),
               _buildUnderlineTextField(_rollNumberController, 'Roll Number'),
               const SizedBox(height: 30),
@@ -76,7 +106,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   child: Center(
                     child: _isLoggingIn
-                        ? const CircularProgressIndicator(color: Colors.white)
+                        ? const CircularProgressIndicator(color: Color(0xFFA60000))
                         : const Text(
                       "Login",
                       style: TextStyle(
@@ -93,16 +123,11 @@ class _LoginPageState extends State<LoginPage> {
                 "Sign Up",
                     () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SignUpPage())),
               ),
-              const SizedBox(height: 20),
-              _buildFooterText(
-                "Are you an admin?",
-                "Admin Login",
-                    () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AdminLoginPage())),
-              ),
             ],
           ),
         ),
       ),
+      floatingActionButton: const FloatingAdminButton(), // Add the floating admin button
     );
   }
 
@@ -127,6 +152,19 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _buildCollegeCodeDropdown() {
+    if (_isLoadingCodes) {
+      return const CircularProgressIndicator(); // Show loading indicator while fetching
+    }
+
+    if (collegeCodes.isEmpty) {
+      return Center(
+        child: Text(
+          "No Data Available",
+          style: TextStyle(color: grayColor, fontWeight: FontWeight.bold),
+        ),
+      ); // Show no data message if no college codes are available
+    }
+
     return DropdownButtonFormField<String>(
       value: selectedCollegeCode,
       hint: Text(
@@ -168,7 +206,7 @@ class _LoginPageState extends State<LoginPage> {
           child: Text(
             actionText,
             style: const TextStyle(
-              color: Colors.white, // Change to white
+              color: Color(0xFFA60000),
               fontWeight: FontWeight.bold,
             ),
           ),

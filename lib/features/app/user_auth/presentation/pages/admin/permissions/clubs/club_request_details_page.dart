@@ -7,9 +7,9 @@ class ClubRequestDetailsPage extends StatefulWidget {
   final Map<String, dynamic> clubDetails;
   final String collegeCode;
 
-  static const Color primaryColor = Color(0xFF101112); // Dark primary color
-  static const Color secondaryColor = Color(0xFFF9AA33); // Light secondary color
-  static const Color darkColor = Colors.white; // Text on dark backgrounds
+  static const Color primaryColor = Color(0xFFFFFDFD); // Dark primary color
+  static const Color secondaryColor = Color(0xFFA60000); // Light secondary color
+  static const Color darkColor = Colors.black; // Text on dark backgrounds
   static const Color grayColor = Color(0xFF7D7F88); // Gray for secondary text
   static const Color accentColor = Color(0xFF7E6377); // Accent color for buttons
 

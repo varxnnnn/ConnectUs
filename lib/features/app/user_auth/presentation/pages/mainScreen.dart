@@ -19,7 +19,7 @@ class _MainScreenState extends State<MainScreen> {
   String? rollNumber;
   String? collegeCode;
 
-  static const Color secondaryColor = Color(0xFFF9AA33); // Light secondary color
+  static const Color secondaryColor = Color(0xFFA60000); // Light secondary color
   static const Color grayColor = Color(0xFF7D7F88); // Gray for unselected items
 
   @override
@@ -56,8 +56,8 @@ class _MainScreenState extends State<MainScreen> {
         children: <Widget>[
           HomePage(collegeCode: collegeCode ?? '', rollnumber: rollNumber ?? ''),
           ClubsPage(collegeCode: collegeCode ?? '', rollNumber: rollNumber ?? ''),
+          HotPage(collegeCode: collegeCode ?? '', rollNumber: rollNumber ?? ''),
           ChatBotScreen(),
-          HotPage(),
           ProfilePage(),
         ],
       ),
@@ -73,20 +73,21 @@ class _MainScreenState extends State<MainScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.groups),
-            label: 'Explore_Clubs',
+            label: 'My Collage',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.trending_up),
+            label: 'Hot Page',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.chat),
             label: 'Chat',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.trending_up),
-            label: 'Hot',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Profile',
           ),
+
         ],
       ),
     );

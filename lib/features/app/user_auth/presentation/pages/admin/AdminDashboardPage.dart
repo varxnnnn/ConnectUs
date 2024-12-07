@@ -27,7 +27,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     super.initState();
     // Initialize the pages with the collegeCode and adminId passed from the login
     _pages = [
-      HomeadminPage(), // Home Page
+      HomeAdminPage(collegeCode: widget.collegeCode, adminId: widget.adminId), // Home Page
       PermissionsPage(collegeCode: widget.collegeCode), // Pass college code to PermissionsPage
       ProfilePage(collegeCode: widget.collegeCode, adminId: widget.adminId), // Pass college code and adminId to ProfilePage
     ];
@@ -59,7 +59,8 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Color(0xFFF9AA33), // Change selected item color to 0xFFF9AA33
+        selectedItemColor: Color(0xFFA60000),
+        unselectedItemColor: Color(0xFF333337),// Change selected item color to 0xFFF9AA33
         onTap: _onItemTapped,
       ),
     );

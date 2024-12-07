@@ -5,14 +5,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class ProfilePage extends StatelessWidget {
   ProfilePage({super.key});
 
-  static const Color primaryColor = Color(0xFF1F2628);
-  static const Color secondaryColor = Color(0xFFF9AA33);
+  static const Color primaryColor = Color(0xFFFFFDFD);
+  static const Color secondaryColor = Color(0xFFA60000);
   static const Color grayColor = Color(0xFF8A969B);
-  static const Color textColor = Color(0xFFEDEDED);
+  static const Color textColor = Color(0xFF050505);
 
   final Map<String, String> collegeNames = {
     'VGNT': 'Vignan',
-    'MGIT': 'Mahatma Gandhi Institute of Technology',
+    'MGIT': 'Mahatma Gandhi Institute',
     'HOLY': 'Holy Mary',
     'SNITS': 'Sreenidhi College',
     'GRRR': 'Gurunanak',
@@ -64,7 +64,8 @@ class ProfilePage extends StatelessWidget {
                   Row(
                     children: [
                       // Profile picture
-                      userData['profilePictureUrl'] != null
+                      userData['profilePictureUrl'] != null &&
+                          userData['profilePictureUrl']!.isNotEmpty
                           ? ClipOval(
                         child: Image.network(
                           userData['profilePictureUrl'],
@@ -86,10 +87,13 @@ class ProfilePage extends StatelessWidget {
                           },
                         ),
                       )
-                          : const Icon(
-                        Icons.account_circle,
-                        size: 90,
-                        color: grayColor,
+                          : ClipOval(
+                        child: Image.asset(
+                          'assets/default_avatar.png',
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                       const SizedBox(width: 16),
 
@@ -99,7 +103,7 @@ class ProfilePage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              userData['name'] ?? 'N/A',  // Updated from 'username' to 'name'
+                              userData['name'] ?? 'N/A',
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
@@ -111,7 +115,7 @@ class ProfilePage extends StatelessWidget {
                               "Branch: ${userData['branch'] ?? 'N/A'}",
                               style: TextStyle(
                                 fontSize: 16,
-                                color: Colors.white,
+                                color: Colors.black,
                               ),
                             ),
                           ],
@@ -130,12 +134,18 @@ class ProfilePage extends StatelessWidget {
 
                   const SizedBox(height: 16),
 
-                  // Contact Info Section (Now includes Bio)
+                  // Contact Info Section
                   _buildSectionHeader("Contact Info"),
                   _buildProfileInfo("Email", user?.email ?? 'Not signed in'),
                   _buildProfileInfo("Phone Number", userData['phone'] ?? 'N/A'),
                   _buildProfileInfo("Location", userData['location'] ?? 'N/A'),
                   _buildProfileInfo("Bio", userData['bio'] ?? 'N/A'),
+
+                  const SizedBox(height: 16),
+
+                  // Verification Section
+                  _buildSectionHeader("Verification"),
+                  _buildProfileInfo("Status", userData['verification'] ?? 'Pending'),
 
                   const SizedBox(height: 20),
 
@@ -187,7 +197,7 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  // Helper method to build section headers (aligned to the left)
+  // Helper method to build section headers
   Widget _buildSectionHeader(String title) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),

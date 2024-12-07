@@ -31,11 +31,11 @@ class _ClubsPageState extends State<ClubsPage> {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  _buildTabButton(0, 'Explore Explore_Clubs'),
+                  _buildTabButton(0, 'Explore Clubs'),
                   const SizedBox(width: 10),
-                  _buildTabButton(1, 'Explore Explore_Events'),
+                  _buildTabButton(1, 'Explore Events'),
                   const SizedBox(width: 10),
-                  _buildTabButton(2, 'My Explore_Clubs'),
+                  _buildTabButton(2, 'My Clubs'),
                 ],
               ),
             ),
@@ -50,8 +50,8 @@ class _ClubsPageState extends State<ClubsPage> {
                   });
                 },
                 children: [
-                  AllClubsPage(collegeCode: widget.collegeCode),
-                  AllEvents(collegeCode: widget.collegeCode),
+                  AllClubsPage(collegeCode: widget.collegeCode,CrollNumber: widget.rollNumber),
+                  AllEvents(collagecode: widget.collegeCode),
                   MyClubsPage(collegeCode: widget.collegeCode, rollNumber: widget.rollNumber),
                 ],
               ),
@@ -74,8 +74,8 @@ class _ClubsPageState extends State<ClubsPage> {
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         decoration: BoxDecoration(
           color: _selectedOptionIndex == index
-              ? const Color(0xFFF9AA33) // Highlight color if selected
-              : const Color(0xFF1E2018), // Default color
+              ? const Color(0xFFA60000) // Highlight color if selected
+              : const Color(0xFF232322), // Default color
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: Colors.grey.shade700),
         ),
