@@ -5,8 +5,8 @@ import 'about_us/about_us.dart';
 
 class ManageClubPage extends StatefulWidget {
   final Map<String, dynamic> clubDetails;
-  final String collegeCode; // Accept collegeCode
-  final String rollNumber; // Accept rollNumber
+  final String collegeCode;
+  final String rollNumber;
 
   const ManageClubPage({
     Key? key,
@@ -22,13 +22,18 @@ class ManageClubPage extends StatefulWidget {
 class _ManageClubPageState extends State<ManageClubPage> {
   int _currentIndex = 0;
 
-  // List of Widgets for each page
   late final List<Widget> _pages;
+
+  // Define colors
+  static const Color backgroundColor = Color(0xFF0D1920);
+  static const Color primaryColor = Color(0xFF0D1920);
+  static const Color selectedTabColor = Color(0xFF0D6EC5);
+  static const Color unselectedTabColor = Color(0xFF7D7F88);
+  static const Color textColor = Colors.white;
 
   @override
   void initState() {
     super.initState();
-    // Initialize the list of pages and pass collegeCode and rollNumber
     _pages = [
       about_us(
         clubDetails: widget.clubDetails,
@@ -37,14 +42,13 @@ class _ManageClubPageState extends State<ManageClubPage> {
       ),
       EventsPage(
         clubDetails: widget.clubDetails,
-        collegeCode: widget.collegeCode, // Pass collegeCode here
-        rollNumber: widget.rollNumber,    // Pass rollNumber here
+        collegeCode: widget.collegeCode,
+        rollNumber: widget.rollNumber,
       ),
       AnnouncementsPage(clubDetails: widget.clubDetails),
     ];
   }
 
-  // Method to build tab buttons
   Widget _buildTabButton(int index, String title) {
     return GestureDetector(
       onTap: () {
@@ -55,13 +59,13 @@ class _ManageClubPageState extends State<ManageClubPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         decoration: BoxDecoration(
-          color: _currentIndex == index ? const Color(0xFFA60000) : Colors.grey[300],
+          color: _currentIndex == index ? selectedTabColor : unselectedTabColor,
           borderRadius: BorderRadius.circular(20.0),
         ),
         child: Text(
           title,
           style: TextStyle(
-            color: _currentIndex == index ? Colors.white : Colors.black,
+            color: textColor,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -72,7 +76,12 @@ class _ManageClubPageState extends State<ManageClubPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      backgroundColor: backgroundColor,
+      appBar: AppBar(
+        title: const Text('Manage Club', style: TextStyle(color: textColor)),
+        backgroundColor: primaryColor,
+        centerTitle: true,
+      ),
       body: Column(
         children: [
           SingleChildScrollView(
@@ -89,7 +98,7 @@ class _ManageClubPageState extends State<ManageClubPage> {
           ),
           const SizedBox(height: 16),
           Expanded(
-            child: _pages[_currentIndex], // Display the selected page
+            child: _pages[_currentIndex],
           ),
         ],
       ),

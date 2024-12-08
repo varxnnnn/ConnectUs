@@ -19,8 +19,9 @@ class _MainScreenState extends State<MainScreen> {
   String? rollNumber;
   String? collegeCode;
 
-  static const Color secondaryColor = Color(0xFFA60000); // Light secondary color
-  static const Color grayColor = Color(0xFF7D7F88); // Gray for unselected items
+  static const Color primaryColor = Color(0xFF0D6EC5); // Selected icon and label
+  static const Color navBackgroundColor = Color(0xFF11232C); // Background of the bottom navigation bar
+  static const Color pageBackgroundColor = Color(0xFF0D1920); // Updated background color
 
   @override
   void initState() {
@@ -51,44 +52,52 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: <Widget>[
-          HomePage(collegeCode: collegeCode ?? '', rollnumber: rollNumber ?? ''),
-          ClubsPage(collegeCode: collegeCode ?? '', rollNumber: rollNumber ?? ''),
-          HotPage(collegeCode: collegeCode ?? '', rollNumber: rollNumber ?? ''),
-          ChatBotScreen(),
-          ProfilePage(),
-        ],
+      body: Container(
+        color: pageBackgroundColor, // Set the background color to the updated value
+        child: IndexedStack(
+          index: _selectedIndex,
+          children: <Widget>[
+            HomePage(collegeCode: collegeCode ?? '', rollnumber: rollNumber ?? ''),
+            ClubsPage(collegeCode: collegeCode ?? '', rollNumber: rollNumber ?? ''),
+            HotPage(collegeCode: collegeCode ?? '', rollNumber: rollNumber ?? ''),
+            ChatBotScreen(),
+            ProfilePage(),
+          ],
+        ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        selectedItemColor: secondaryColor, // Set selected icon color
-        unselectedItemColor: grayColor, // Set unselected icon color
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _selectedIndex,
+        onDestinationSelected: _onItemTapped,
+        backgroundColor: navBackgroundColor,
+        destinations: const <NavigationDestination>[
+          NavigationDestination(
+            icon: Icon(Icons.home_outlined),
+            selectedIcon: Icon(Icons.home, color: primaryColor),
             label: 'Home',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.groups),
-            label: 'My Collage',
+          NavigationDestination(
+            icon: Icon(Icons.groups_outlined),
+            selectedIcon: Icon(Icons.groups, color: primaryColor),
+            label: 'Clubs & Events',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.trending_up),
+          NavigationDestination(
+            icon: Icon(Icons.trending_up_outlined),
+            selectedIcon: Icon(Icons.trending_up, color: primaryColor),
             label: 'Hot Page',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
+          NavigationDestination(
+            icon: Icon(Icons.chat_outlined),
+            selectedIcon: Icon(Icons.chat, color: primaryColor),
             label: 'Chat',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+          NavigationDestination(
+            icon: Icon(Icons.person_outline),
+            selectedIcon: Icon(Icons.person, color: primaryColor),
             label: 'Profile',
           ),
-
         ],
+        indicatorColor: navBackgroundColor, // Highlight for the selected tab
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       ),
     );
   }

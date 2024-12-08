@@ -11,19 +11,15 @@ class EventsTab extends StatelessWidget {
   // Method to fetch events from Firestore
   Future<List<Map<String, dynamic>>> _getEvents() async {
     try {
-      // Fetch events for the specific clubId from the 'myEvents' collection
       QuerySnapshot eventsSnapshot = await FirebaseFirestore.instance
           .collection('allClubs')
           .doc(clubId)
           .collection('myEvents')
           .get();
 
-      // Map the events into a list of Map<String, dynamic>
-      List<Map<String, dynamic>> eventsList = [];
-      for (var doc in eventsSnapshot.docs) {
-        eventsList.add(doc.data() as Map<String, dynamic>);
-      }
-      return eventsList;
+      return eventsSnapshot.docs
+          .map((doc) => doc.data() as Map<String, dynamic>)
+          .toList();
     } catch (e) {
       print("Error fetching events: $e");
       return [];
@@ -32,7 +28,7 @@ class EventsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Map<String, dynamic>>>(  // FutureBuilder to handle fetching data
+    return FutureBuilder<List<Map<String, dynamic>>>(
       future: _getEvents(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -47,7 +43,6 @@ class EventsTab extends StatelessWidget {
           return const Center(child: Text('No events available for this club.'));
         }
 
-        // List of events
         final events = snapshot.data!;
 
         return ListView.builder(
@@ -55,11 +50,10 @@ class EventsTab extends StatelessWidget {
           itemCount: events.length,
           itemBuilder: (context, index) {
             final event = events[index];
-            final eventId = event['eventId']; // Assuming 'eventId' is a field in the event document
+            final eventId = event['eventId'];
 
             return GestureDetector(
               onTap: () {
-                // Navigate to the Event Details page, passing both eventId and clubId
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -79,7 +73,7 @@ class EventsTab extends StatelessWidget {
                             flex: 3,
                             child: event['posterUrl'] != null
                                 ? Image.network(
-                              event['posterUrl'], // Use posterUrl here
+                              event['posterUrl'],
                               fit: BoxFit.cover,
                             )
                                 : Container(
@@ -93,9 +87,7 @@ class EventsTab extends StatelessWidget {
                           ),
                           Expanded(
                             flex: 1,
-                            child: Container(
-                              color: Colors.white,
-                            ),
+                            child: Container(color: Colors.white),
                           ),
                         ],
                       ),

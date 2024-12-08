@@ -5,10 +5,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class ProfilePage extends StatelessWidget {
   ProfilePage({super.key});
 
-  static const Color primaryColor = Color(0xFFFFFDFD);
-  static const Color secondaryColor = Color(0xFFA60000);
+  static const Color primaryColor = Color(0xFF0D1920); // Updated background color
+  static const Color secondaryColor = Color(0xFF0D6EC5);
   static const Color grayColor = Color(0xFF8A969B);
-  static const Color textColor = Color(0xFF050505);
+  static const Color textColor = Color(0xFFECE6E6);
 
   final Map<String, String> collegeNames = {
     'VGNT': 'Vignan',
@@ -30,7 +30,7 @@ class ProfilePage extends StatelessWidget {
         foregroundColor: secondaryColor,
         automaticallyImplyLeading: false,
       ),
-      backgroundColor: primaryColor,
+      backgroundColor: primaryColor, // Set background color to the updated value
       body: FutureBuilder<DocumentSnapshot>(
         future: FirebaseFirestore.instance
             .collection('allUsers')
@@ -115,7 +115,7 @@ class ProfilePage extends StatelessWidget {
                               "Branch: ${userData['branch'] ?? 'N/A'}",
                               style: TextStyle(
                                 fontSize: 16,
-                                color: Colors.black,
+                                color: textColor,
                               ),
                             ),
                           ],

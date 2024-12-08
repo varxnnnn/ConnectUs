@@ -6,6 +6,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
+// Define colors at the top
+const Color backgroundColor = Color(0xFF0D1920);
+const Color primaryColor = Color(0xFFECE6E6);
+const Color secondaryColor = Color(0xFF0D6EC5);
+const Color textColor = Colors.white;
+const Color secondaryTextColor = Color(0xFF86B2D8);
+
 class CreateClubPage extends StatefulWidget {
   final String collegeCode;
 
@@ -28,29 +35,15 @@ class _CreateClubPageState extends State<CreateClubPage> {
   XFile? _logoImage; // To hold the selected logo image
 
   final List<String> categories = [
-    'Dance',
-    'Singing',
-    'Coding',
-    'Sports',
-    'Event Managing',
-    'Culturals',
-    'Arts',
-    'Drama',
-    'Music',
-    'Debate',
+    'Dance', 'Singing', 'Coding', 'Sports', 'Event Managing',
+    'Culturals', 'Arts', 'Drama', 'Music', 'Debate',
   ];
-
-  static const Color primaryColor = Color(0xFFECE6E6);
-  static const Color secondaryColor = Color(0xFFA60000);
-  static const Color grayColor = Color(0xFF4A6572);
-  static const Color darkColor = Colors.black;
 
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
     setState(() {
-      _logoImage = pickedFile; // Store the selected image
+      _logoImage = pickedFile;
     });
   }
 
@@ -59,48 +52,38 @@ class _CreateClubPageState extends State<CreateClubPage> {
       Fluttertoast.showToast(msg: "Please fill all fields and select a logo", backgroundColor: Colors.red);
       return;
     }
-
     setState(() {
-      _isCreating = true; // Set loading state to true
+      _isCreating = true;
     });
 
     try {
-      // Upload the image to Firebase Storage
       final storageRef = FirebaseStorage.instance.ref();
       final logoRef = storageRef.child('club_logos/${_logoImage!.name}');
       await logoRef.putFile(File(_logoImage!.path));
-
-      // Get the download URL of the uploaded image
       final logoUrl = await logoRef.getDownloadURL();
 
-      // Get admin details from Firestore using adminId
-      final adminDoc = await FirebaseFirestore.instance.collection('allUsers').doc(FirebaseAuth.instance.currentUser!.uid).get();
-
+      final adminDoc = await _firestore.collection('allUsers').doc(_firebaseAuth.currentUser!.uid).get();
       if (adminDoc.exists) {
         var adminData = adminDoc.data()!;
-
-        // Generate a unique ID for the club using Firestore's auto-generated document ID
-        final clubRef = FirebaseFirestore.instance.collection('users')
+        final clubRef = _firestore.collection('users')
             .doc(widget.collegeCode)
             .collection('clubRequests')
-            .doc(); // Firestore auto-generates a document ID
+            .doc();
+        final clubId = clubRef.id;
 
-        final clubId = clubRef.id; // Get the generated club ID
-
-        // Add the club request to Firestore under the 'clubRequests' collection
         await clubRef.set({
-          'clubId': clubId,  // Save the generated clubId
+          'clubId': clubId,
           'name': _nameController.text,
           'category': _selectedCategory,
-          'aim': _aimController.text.isEmpty ? 'No aim provided' : _aimController.text, // Default to 'No aim provided' if empty
+          'aim': _aimController.text.isEmpty ? 'No aim provided' : _aimController.text,
           'description': _descriptionController.text,
-          'logoUrl': logoUrl, // Save the logo URL
-          'adminId': FirebaseAuth.instance.currentUser!.uid,
-          'adminName': adminData['name'], // Admin name from Firestore
-          'adminProfilePic': adminData['profilePictureUrl'], // Admin profile picture from Firestore
-          'adminRollNumber': adminData['rollNumber'], // Admin's roll number from Firestore
-          'adminBranch': adminData['branch'], // Admin's branch from Firestore
-          'createdAt': FieldValue.serverTimestamp(), // Timestamp when the request was created
+          'logoUrl': logoUrl,
+          'adminId': _firebaseAuth.currentUser!.uid,
+          'adminName': adminData['name'],
+          'adminProfilePic': adminData['profilePictureUrl'],
+          'adminRollNumber': adminData['rollNumber'],
+          'adminBranch': adminData['branch'],
+          'createdAt': FieldValue.serverTimestamp(),
         });
 
         Fluttertoast.showToast(msg: "Request sent to admin for approval!", backgroundColor: Colors.green);
@@ -112,7 +95,7 @@ class _CreateClubPageState extends State<CreateClubPage> {
       Fluttertoast.showToast(msg: "Error: $e", backgroundColor: Colors.red);
     } finally {
       setState(() {
-        _isCreating = false; // Set loading state to false when done
+        _isCreating = false;
       });
     }
   }
@@ -121,60 +104,45 @@ class _CreateClubPageState extends State<CreateClubPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Club'),
+        title: const Text('Create Club', style: TextStyle(color: textColor)),
         centerTitle: true,
-        backgroundColor: primaryColor,
+        backgroundColor: backgroundColor,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15),
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // Add space before inputs
               const SizedBox(height: 20),
-
-              // Club Logo Picker
               GestureDetector(
                 onTap: _pickImage,
                 child: Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    border: Border.all(color: grayColor),
+                    border: Border.all(color: secondaryTextColor),
                     borderRadius: BorderRadius.circular(10),
-                    color: Colors.white,
+                    color: primaryColor,
                   ),
                   child: Center(
                     child: Text(
                       _logoImage != null ? _logoImage!.name : 'Select Club Logo',
-                      style: TextStyle(color: _logoImage != null ? darkColor : grayColor),
+                      style: TextStyle(color: _logoImage != null ? textColor : secondaryTextColor),
                     ),
                   ),
                 ),
               ),
               const SizedBox(height: 30),
-
-              // Club Name Input
               _buildUnderlineTextField(_nameController, 'Club Name'),
               const SizedBox(height: 10),
-
-              // Category Dropdown
               _buildCategoryDropdown(),
               const SizedBox(height: 10),
-
-              // Aim Input
               _buildUnderlineTextField(_aimController, 'Aim'),
               const SizedBox(height: 10),
-
-              // Description Input
               _buildUnderlineTextField(_descriptionController, 'Description', maxLines: 3),
               const SizedBox(height: 30),
-
-              // Submit Button or Circular Progress Indicator
               _isCreating
-                  ? CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(secondaryColor), // Set loading color to secondary
-              ) // Show loading spinner when creating
+                  ? CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(secondaryColor))
                   : GestureDetector(
                 onTap: _createClubRequest,
                 child: Container(
@@ -185,13 +153,7 @@ class _CreateClubPageState extends State<CreateClubPage> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Center(
-                    child: const Text(
-                      "Create Club",
-                      style: TextStyle(
-                        color: darkColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    child: const Text("Create Club", style: TextStyle(color: textColor, fontWeight: FontWeight.bold)),
                   ),
                 ),
               ),
@@ -202,57 +164,27 @@ class _CreateClubPageState extends State<CreateClubPage> {
     );
   }
 
-  Widget _buildUnderlineTextField(TextEditingController controller, String hintText, {int maxLines = 1, bool obscureText = false}) {
+  Widget _buildUnderlineTextField(TextEditingController controller, String hintText, {int maxLines = 1}) {
     return TextField(
       controller: controller,
-      obscureText: obscureText,
       maxLines: maxLines,
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: TextStyle(color: grayColor),
-        filled: true,
-        fillColor: Colors.transparent,
-        enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: grayColor),
-        ),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: secondaryColor, width: 2),
-        ),
+        hintStyle: TextStyle(color: secondaryTextColor),
+        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: secondaryTextColor)),
+        focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: secondaryColor, width: 2)),
       ),
-      style: const TextStyle(color: darkColor),
+      style: const TextStyle(color: textColor),
     );
   }
 
   Widget _buildCategoryDropdown() {
     return DropdownButtonFormField<String>(
       value: _selectedCategory,
-      dropdownColor: Colors.grey[200], // Set the dropdown list background color to light gray
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: Colors.transparent,
-        enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: grayColor),
-        ),
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: secondaryColor, width: 2),
-        ),
-      ),
-      items: categories.map((String category) {
-        return DropdownMenuItem<String>(
-          value: category,
-          child: Text(
-            category,
-            style: const TextStyle(color: Colors.black), // Set dropdown text color to black
-          ),
-        );
-      }).toList(),
-      onChanged: (value) {
-        setState(() {
-          _selectedCategory = value!;
-        });
-      },
-      style: const TextStyle(color: Colors.black), // Set the selected value's text color to black
+      decoration: InputDecoration(enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: secondaryTextColor))),
+      items: categories.map((String category) => DropdownMenuItem(value: category, child: Text(category, style: TextStyle(color: secondaryTextColor)))).toList(),
+      onChanged: (value) => setState(() => _selectedCategory = value!),
+      style: const TextStyle(color: textColor),
     );
   }
-
 }

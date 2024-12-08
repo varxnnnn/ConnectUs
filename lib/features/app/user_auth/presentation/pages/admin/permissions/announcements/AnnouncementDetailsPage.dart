@@ -19,7 +19,6 @@ class AnnouncementDetailsPage extends StatelessWidget {
     final String adminProfilePic = announcementData['adminProfilePic'] ?? '';
     final String clubId = announcementData['clubId'] ?? 'Unknown Club ID'; // Set default value if not provided
 
-
     final String clubName = announcementData['clubName'] ?? 'Unknown Club';
     final String clubAim = announcementData['clubAim'] ?? 'Unknown Aim';
     final String clubCategory = announcementData['clubCategory'] ?? 'Unknown Category';
@@ -65,7 +64,6 @@ class AnnouncementDetailsPage extends StatelessWidget {
 
         batch.set(firestore.collection('allClubs').doc(clubId).collection('myAnnouncement').doc(documentId), announcementData);
 
-        
         // Add announcement to collegeAnnouncements
         batch.set(
           firestore.collection('users').doc(collegeCode).collection('collegeAnnouncements').doc(documentId),
@@ -92,6 +90,7 @@ class AnnouncementDetailsPage extends StatelessWidget {
 
         // Show success and navigate back
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Announcement Accepted')));
+
         Navigator.pop(context); // Go back to the previous page
       } catch (e) {
         print('Error: $e');
@@ -130,8 +129,9 @@ class AnnouncementDetailsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Announcement Details'),
-        backgroundColor: Color(0xFFA60000), // AppBar color for a fresh look
+        backgroundColor: Color(0xFF11232C), // AppBar color for a fresh look
       ),
+      backgroundColor: Color(0xFF0D1920),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
@@ -141,15 +141,43 @@ class AnnouncementDetailsPage extends StatelessWidget {
               // Display Subject
               Text(
                 'Subject: $subject',
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFFA60000)),
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF0D6EC5)),
               ),
               const SizedBox(height: 8),
+
+              // Display Content
+              Text(
+                'Content: $content',
+                style: const TextStyle(fontSize: 18),
+              ),
+              const SizedBox(height: 16),
 
               // Display Created Date
               Text(
                 'Created on: $formattedDate',
                 style: const TextStyle(fontSize: 16, color: Colors.grey),
               ),
+              const SizedBox(height: 16),
+
+              // Club Info
+              Text(
+                'Club Name: $clubName',
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                'Club Aim: $clubAim',
+                style: const TextStyle(fontSize: 16),
+              ),
+              Text(
+                'Club Category: $clubCategory',
+                style: const TextStyle(fontSize: 16),
+              ),
+              if (clubLogoUrl.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                ClipOval(
+                  child: Image.network(clubLogoUrl, width: 50, height: 50, fit: BoxFit.cover),
+                ),
+              ],
               const SizedBox(height: 16),
 
               // Admin Info
@@ -179,34 +207,6 @@ class AnnouncementDetailsPage extends StatelessWidget {
                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
-
-              // Club Info
-              Text(
-                'Club Name: $clubName',
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              Text(
-                'Club Aim: $clubAim',
-                style: const TextStyle(fontSize: 16),
-              ),
-              Text(
-                'Club Category: $clubCategory',
-                style: const TextStyle(fontSize: 16),
-              ),
-              if (clubLogoUrl.isNotEmpty) ...[
-                const SizedBox(height: 8),
-                ClipOval(
-                  child: Image.network(clubLogoUrl, width: 50, height: 50, fit: BoxFit.cover),
-                ),
-              ],
-              const SizedBox(height: 16),
-
-              // Announcement Content
-              Text(
-                'Content: $content',
-                style: const TextStyle(fontSize: 18),
-              ),
-              const SizedBox(height: 20),
 
               // Accept and Reject buttons
               Row(

@@ -1,6 +1,14 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'college_admins.dart'; // Import the new CollegeAdminsSection
+
+
+// Define colors
+const Color primaryColor = Color(0xFF0D6EC5);
+const Color cardBackgroundColor = Color(0xFF1E2018);
+const Color announcementCardColor = Color(0xFFECE6E6);
+const Color announcementTextColor = Color(0xFF131212);
 
 class HotPage extends StatefulWidget {
   final String collegeCode;
@@ -55,6 +63,7 @@ class _HotPageState extends State<HotPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildImageCarousel(imageList),
+              CollegeCodesSection(collegeCode: widget.collegeCode),
               const Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Text(
@@ -63,7 +72,7 @@ class _HotPageState extends State<HotPage> {
                     fontSize: 32,
                     fontFamily: 'Archivo',
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFFA60000),
+                    color: primaryColor,
                   ),
                 ),
               ),
@@ -76,7 +85,7 @@ class _HotPageState extends State<HotPage> {
                     fontSize: 32,
                     fontFamily: 'Archivo',
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFFA60000),
+                    color: primaryColor,
                   ),
                 ),
               ),
@@ -89,7 +98,7 @@ class _HotPageState extends State<HotPage> {
                     fontSize: 32,
                     fontFamily: 'Archivo',
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFFA60000),
+                    color: primaryColor,
                   ),
                 ),
               ),
@@ -159,7 +168,7 @@ class _HotPageState extends State<HotPage> {
                       },
                       child: const Text(
                         'See More',
-                        style: TextStyle(fontSize: 18, color: Color(0xFFA60000)),
+                        style: TextStyle(fontSize: 18, color: primaryColor),
                       ),
                     ),
                   ),
@@ -170,7 +179,7 @@ class _HotPageState extends State<HotPage> {
                 String clubLogoUrl = clubData['logoUrl'] ?? '';
 
                 return Card(
-                  color: const Color(0xFF1E2018),
+                  color: cardBackgroundColor,
                   child: Column(
                     children: [
                       Expanded(
@@ -287,70 +296,69 @@ class _HotPageState extends State<HotPage> {
 
   Widget _buildAnnouncementList() {
     return FutureBuilder<List<QueryDocumentSnapshot>>(
-        future: _fetchAnnouncements(),
-    builder: (context, snapshot) {
-    if (snapshot.connectionState == ConnectionState.waiting) {
-    return const Center(child: CircularProgressIndicator());
-    } else if (snapshot.hasError) {
-    return const Center(child: Text("Error loading announcements"));
-    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-    return const Center(child: Text("No announcements available"));
-    } else {
-    return ListView.builder(
-    shrinkWrap: true,
-    physics: const NeverScrollableScrollPhysics(),
-    itemCount: snapshot.data!.length,
-    itemBuilder: (context, index) {
-    final announcementData = snapshot.data![index].data() as Map<String, dynamic>;
-    String subject = announcementData['subject'] ?? 'Unknown Subject';
-    String content = announcementData['content'] ?? '';
-    String clubName = announcementData['clubName'] ?? 'Unknown Club';
+      future: _fetchAnnouncements(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return const Center(child: Text("Error loading announcements"));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text("No announcements available"));
+        } else {
+          return ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: snapshot.data!.length,
+            itemBuilder: (context, index) {
+              final announcementData = snapshot.data![index].data() as Map<String, dynamic>;
+              String subject = announcementData['subject'] ?? 'Unknown Subject';
+              String content = announcementData['content'] ?? '';
+              String clubName = announcementData['clubName'] ?? 'Unknown Club';
 
-    String truncatedContent = content.length > 50 ? '${content.substring(0, 50)}...' : content;
+              String truncatedContent = content.length > 50 ? '${content.substring(0, 50)}...' : content;
 
-    return Card(
-      color: const Color(0xFFECE6E6),
-      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(16.0),
-        title: Text(
-          subject,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFFA60000),
-          ),
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Club: $clubName',
-              style: const TextStyle(
-                fontSize: 14,
-                color: Color(0xFFA60000),
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              truncatedContent,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Color(0xFFA60000),
-              ),
-            ),
-          ],
-        ),
-        onTap: () {
-          // Navigate to the full announcement details page
-        },
-      ),
-    );
-    },
-    );
-    }
-    },
+              return Card(
+                color: announcementCardColor,
+                margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.all(16.0),
+                  title: Text(
+                    subject,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: announcementTextColor,
+                    ),
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Club: $clubName',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: announcementTextColor,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        truncatedContent,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: announcementTextColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                  onTap: () {
+                    // Navigate to the full announcement details page
+                  },
+                ),
+              );
+            },
+          );
+        }
+      },
     );
   }
 }
-

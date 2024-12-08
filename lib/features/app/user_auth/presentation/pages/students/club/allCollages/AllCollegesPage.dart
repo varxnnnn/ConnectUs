@@ -1,50 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'club_details_page/clubdetailpage.dart';
+import 'CollegeDetailsPage.dart';
 
-class AllClubsPage extends StatefulWidget {
-  final String collegeCode;
-  final String CrollNumber;
-
-  const AllClubsPage({Key? key, required this.collegeCode, required this.CrollNumber,}) : super(key: key);
+class AllCollegesPage extends StatefulWidget {
+  const AllCollegesPage({Key? key}) : super(key: key);
 
   @override
-  _AllClubsPageState createState() => _AllClubsPageState();
+  _AllCollegesPageState createState() => _AllCollegesPageState();
 }
 
-class _AllClubsPageState extends State<AllClubsPage> {
+class _AllCollegesPageState extends State<AllCollegesPage> {
   TextEditingController _searchController = TextEditingController();
   String _searchQuery = "";
-  Set<String> _selectedCollegeCodes = {"All"}; // Default to "All" selected
-
-  final List<String> _collegeCodes = [
-    'All',
-    'VGNT',
-    'CMR',
-    'GRRR',
-    'MGIT',
-    'SNITS',
-    'HOLY',
-  ]; // List of college codes including "All"
 
   @override
   void initState() {
     super.initState();
   }
 
-  // Fetch clubs from Firestore with search and college code filter
-  Stream<List<Map<String, dynamic>>> _fetchCollegeClubs() {
-    Query query = FirebaseFirestore.instance.collection('allClubs');
+  // Fetch all colleges from Firestore with search filter
+  Stream<List<Map<String, dynamic>>> _fetchAllColleges() {
+    Query query = FirebaseFirestore.instance.collection('colleges');
 
-    // Apply college code filter if "All" is not selected
-    if (!_selectedCollegeCodes.contains("All")) {
-      query = query.where(
-        'collegeCode',
-        whereIn: _selectedCollegeCodes.isNotEmpty ? _selectedCollegeCodes.toList() : null,
-      );
-    }
-
-    // Apply search query filter
+    // Apply search query filter if it's not empty
     if (_searchQuery.isNotEmpty) {
       query = query
           .where('name', isGreaterThanOrEqualTo: _searchQuery)
@@ -54,7 +32,7 @@ class _AllClubsPageState extends State<AllClubsPage> {
     return query.snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
-        return {...data, 'id': doc.id}; // Add club ID to the data
+        return {...data, 'id': doc.id}; // Add college ID to the data
       }).toList();
     });
   }
@@ -66,38 +44,18 @@ class _AllClubsPageState extends State<AllClubsPage> {
     });
   }
 
-  // Handle college code selection
-  void _onCollegeCodeSelected(String code) {
-    setState(() {
-      if (code == "All") {
-        _selectedCollegeCodes = {"All"}; // Reset to only "All"
-      } else {
-        _selectedCollegeCodes.remove("All"); // Deselect "All" when a specific college is selected
-        if (_selectedCollegeCodes.contains(code)) {
-          _selectedCollegeCodes.remove(code); // Deselect if already selected
-        } else {
-          _selectedCollegeCodes.add(code); // Add to selection
-        }
-
-        // If no specific colleges are selected, default to "All"
-        if (_selectedCollegeCodes.isEmpty) {
-          _selectedCollegeCodes = {"All"};
-        }
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
+          // Search Bar for searching colleges
           Card(
-            color: Color(0xFFF0F0F0), // Light gray background similar to WhatsApp
+            color: Color(0xFFF0F0F0), // Light gray background
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10), // Fully rounded corners
+              borderRadius: BorderRadius.circular(10), // Rounded corners
             ),
-            elevation: 0, // No elevation for a flat look
+            elevation: 0, // Flat look
             margin: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 17.0, vertical: 0.2),
@@ -114,7 +72,7 @@ class _AllClubsPageState extends State<AllClubsPage> {
                       onChanged: _onSearchChanged,
                       style: const TextStyle(color: Colors.black, fontSize: 16),
                       decoration: InputDecoration(
-                        hintText: 'Search for a club...',
+                        hintText: 'Search for a college...',
                         hintStyle: const TextStyle(color: Colors.grey), // Subtle hint text color
                         border: InputBorder.none,
                       ),
@@ -124,41 +82,11 @@ class _AllClubsPageState extends State<AllClubsPage> {
               ),
             ),
           ),
-
           const SizedBox(height: 8),
-          // Scrollable list of college code filters
-          SizedBox(
-            height: 40,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              itemCount: _collegeCodes.length,
-              itemBuilder: (context, index) {
-                final code = _collegeCodes[index];
-                final isSelected = _selectedCollegeCodes.contains(code);
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: ChoiceChip(
-                    label: Text(
-                      code,
-                      style: TextStyle(
-                        color: isSelected ? Colors.white : Colors.black,
-                      ),
-                    ),
-                    selected: isSelected,
-                    onSelected: (_) => _onCollegeCodeSelected(code),
-                    selectedColor: Color(0xFF0D6EC5),
-                    backgroundColor: Colors.grey[200],
-                  ),
-                );
-              },
-            ),
-          ),
-          const SizedBox(height: 8),
-          // Clubs List
+          // Colleges List
           Expanded(
             child: StreamBuilder<List<Map<String, dynamic>>>(
-              stream: _fetchCollegeClubs(),
+              stream: _fetchAllColleges(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -168,28 +96,26 @@ class _AllClubsPageState extends State<AllClubsPage> {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 }
 
-                final clubs = snapshot.data ?? [];
+                final colleges = snapshot.data ?? [];
 
-                return clubs.isEmpty
-                    ? const Center(child: Text('No clubs available.'))
+                return colleges.isEmpty
+                    ? const Center(child: Text('No colleges available.'))
                     : ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                  itemCount: clubs.length,
+                  itemCount: colleges.length,
                   itemBuilder: (context, index) {
-                    final club = clubs[index];
-                    final clubId = club['id'];
+                    final college = colleges[index];
+                    final collegeId = college['id'];
 
                     return GestureDetector(
                       onTap: () {
-                        // Navigate to the ClubDetailsPage
+                        // Navigate to the CollegeDetailsPage
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ClubDetailsPage(
-                              clubDetails: club,
-                              clubId: clubId,
-                              CrollNumber: widget.CrollNumber,
-                              collegeCode: widget.collegeCode,
+                            builder: (context) => CollagesDetailsPage(
+                              collegeDetails: college,
+                              collegeId: collegeId,
                             ),
                           ),
                         );
@@ -202,12 +128,12 @@ class _AllClubsPageState extends State<AllClubsPage> {
                             children: [
                               Row(
                                 children: [
-                                  // Club logo
+                                  // College logo
                                   Expanded(
                                     flex: 3,
-                                    child: club['logoUrl'] != null
+                                    child: college['logoUrl'] != null
                                         ? Image.network(
-                                      club['logoUrl']!,
+                                      college['logoUrl']!,
                                       fit: BoxFit.cover,
                                     )
                                         : Container(
@@ -245,7 +171,7 @@ class _AllClubsPageState extends State<AllClubsPage> {
                                   ),
                                 ),
                               ),
-                              // Club details
+                              // College details
                               Positioned(
                                 right: 8,
                                 top: 8,
@@ -258,7 +184,7 @@ class _AllClubsPageState extends State<AllClubsPage> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        club['name'] ?? 'Unnamed Club',
+                                        college['name'] ?? 'Unnamed College',
                                         style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 16,
@@ -266,14 +192,6 @@ class _AllClubsPageState extends State<AllClubsPage> {
                                         ),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        club['category'] ?? 'Category not specified',
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black,
-                                        ),
                                       ),
                                     ],
                                   ),

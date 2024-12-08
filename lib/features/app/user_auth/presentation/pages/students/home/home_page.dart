@@ -27,6 +27,12 @@ class _HomePageState extends State<HomePage> {
     'assets/4.jpg',
   ];
 
+  static const Color primaryColor = Color(0xFF0D6EC5); // Selected icon and label
+  static const Color grayColor = Color(0xFF86B2D8); // Hover/transition color
+  static const Color secondaryColor = Color(0xFFE9ECED); // Unselected icons and labels
+  static const Color whiteColor = Colors.white; // White text
+  static const Color darkText = Colors.black; // Black text
+
   // Fetch clubs from Firestore
   Future<List<QueryDocumentSnapshot>> _fetchClubs() async {
     final snapshot = await FirebaseFirestore.instance
@@ -115,7 +121,7 @@ class _HomePageState extends State<HomePage> {
                     fontSize: 32,
                     fontFamily: 'Archivo',
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFFA60000),
+                    color: secondaryColor,
                   ),
                 ),
               ),
@@ -131,7 +137,7 @@ class _HomePageState extends State<HomePage> {
                     fontSize: 32,
                     fontFamily: 'Archivo',
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFFA60000),
+                    color: secondaryColor,
                   ),
                 ),
               ),
@@ -146,7 +152,7 @@ class _HomePageState extends State<HomePage> {
                     fontSize: 32,
                     fontFamily: 'Archivo',
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFFA60000),
+                    color: secondaryColor,
                   ),
                 ),
               ),
@@ -160,7 +166,7 @@ class _HomePageState extends State<HomePage> {
                     fontSize: 32,
                     fontFamily: 'Archivo',
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFFA60000),
+                    color: secondaryColor,
                   ),
                 ),
               ),
@@ -234,7 +240,7 @@ class _HomePageState extends State<HomePage> {
                       borderRadius: BorderRadius.circular(10), // Match rounded corners
                       gradient: LinearGradient(
                         colors: [
-                          Colors.black.withOpacity(0.8), // Dark at the bottom
+                          Colors.black.withOpacity(1.0), // Dark at the bottom
                           Colors.transparent, // Fade to transparent at the top
                         ],
                         begin: Alignment.bottomCenter,
@@ -311,11 +317,11 @@ class _HomePageState extends State<HomePage> {
               if (index == snapshot.data!.length) {
                 // Last item, "See More" button
                 return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  padding: const EdgeInsets.all(8.0),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFFFDFD), // Background color
-                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.transparent, // Background color
+                      borderRadius: BorderRadius.circular(5),
                     ),
                     child: TextButton(
                       onPressed: () {
@@ -329,9 +335,9 @@ class _HomePageState extends State<HomePage> {
                         );
                       },
                       child: const Text(
-                        'See More',
+                        'See More Clubs',
                         style: TextStyle(
-                          color: Color(0xFFA60000),
+                          color: primaryColor,
                           fontSize: 18,
                         ),
                       ),
@@ -458,7 +464,7 @@ class _HomePageState extends State<HomePage> {
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18, // Larger font size
-                                color: Colors.black,
+                                color: secondaryColor,
                               ),
                             ),
                           ],
@@ -502,7 +508,7 @@ class _HomePageState extends State<HomePage> {
               return Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Card(
-                  color: const Color(0xFFECE6E6),
+                  color: Colors.transparent,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),

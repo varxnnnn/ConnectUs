@@ -21,9 +21,9 @@ class StudentsRequestsPage extends StatelessWidget {
                 Tab(text: 'My Students'),
                 Tab(text: 'Student Requests'),
               ],
-              indicatorColor: Color(0xFFA60000), // Bright indicator color
-              labelColor: Color(0xFFA60000), // Bright label color for active tabs
-              unselectedLabelColor: Colors.black, // Bright inactive tab color
+              indicatorColor: Color(0xFF0D6EC5), // Bright indicator color
+              labelColor: Color(0xFF0D6EC5), // Bright label color for active tabs
+              unselectedLabelColor: Color(0xFFCACAD5), // Bright inactive tab color
               labelStyle: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
@@ -98,7 +98,7 @@ class MyStudentsTab extends StatelessWidget {
               ),
               title: Text(
                 studentName,
-                style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
               ),
               subtitle: Text(
                 'Roll Number: $studentRollNumber',
@@ -171,7 +171,7 @@ class StudentRequestsTab extends StatelessWidget {
               ),
               title: Text(
                 studentName,
-                style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
               ),
               subtitle: Text(
                 'Roll Number: $studentRollNumber',

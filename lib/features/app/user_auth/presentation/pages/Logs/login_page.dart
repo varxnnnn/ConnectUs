@@ -17,42 +17,52 @@ class _LoginPageState extends State<LoginPage> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-  TextEditingController _rollNumberController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _rollNumberController = TextEditingController();
 
   bool _isLoggingIn = false;
-  bool _isLoadingCodes = true; // Added for loading state
-
-  static const Color primaryColor = Color(0xFF1F2628);
-  static const Color secondaryColor = Color(0xFFA60000);
-  static const Color grayColor = Color(0xFF4A6572);
-  static const Color darkColor = Colors.black;
+  bool _isLoadingCodes = true;
 
   List<String> collegeCodes = [];
   String? selectedCollegeCode;
 
+  static const LinearGradient primaryGradient = LinearGradient(
+    colors: [
+      Color(0xFF041A2E), // Dark blue
+      Color(0xFF193356), // Deep blue/teal
+      Color(0xFF041D33), // Dark blue
+    ],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    stops: [0.1, 0.7, 1.0],
+  );
+
+  static const Color primaryColor = Color(0xFF0D6EC5);
+  static const Color secondaryColor = Color(0xFF86B2D8);
+  static const Color grayColor = Color(0xFFE9ECED);
+  static const Color darkColor = Colors.white;
+  static const Color darktext = Colors.white;
+
+
   @override
   void initState() {
     super.initState();
-    _fetchCollegeCodes(); // Fetch college codes when the page is initialized
+    _fetchCollegeCodes();
   }
 
   Future<void> _fetchCollegeCodes() async {
     try {
       DocumentSnapshot doc = await _firestore.collection('codes').doc('allCodes').get();
       if (doc.exists) {
-        // Cast the document data to Map<String, dynamic>
         Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-
         setState(() {
-          // Safely access the 'collegeCodes' field
           collegeCodes = List<String>.from(data['collegeCodes'] ?? []);
-          _isLoadingCodes = false; // Set loading state to false after data is fetched
+          _isLoadingCodes = false;
         });
       } else {
         setState(() {
-          _isLoadingCodes = false; // Set loading state to false if document doesn't exist
+          _isLoadingCodes = false;
         });
       }
     } catch (e) {
@@ -74,64 +84,78 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                "Student Login",
-                style: TextStyle(fontSize: 27, fontWeight: FontWeight.bold, color: secondaryColor),
-              ),
-              const SizedBox(height: 30),
-              _buildUnderlineTextField(_emailController, 'Email'),
-              const SizedBox(height: 10),
-              _buildUnderlineTextField(_passwordController, 'Password', obscureText: true),
-              const SizedBox(height: 10),
-              _isLoadingCodes
-                  ? const CircularProgressIndicator() // Show loading indicator while fetching
-                  : _buildCollegeCodeDropdown(), // Show dropdown after data is fetched
-              const SizedBox(height: 10),
-              _buildUnderlineTextField(_rollNumberController, 'Roll Number'),
-              const SizedBox(height: 30),
-              GestureDetector(
-                onTap: _login,
-                child: Container(
-                  width: double.infinity,
-                  height: 45,
-                  decoration: BoxDecoration(
-                    color: secondaryColor,
-                    borderRadius: BorderRadius.circular(10),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: primaryGradient,
+        ),
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  "Student Login",
+                  style: TextStyle(
+                    fontSize: 27,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
-                  child: Center(
-                    child: _isLoggingIn
-                        ? const CircularProgressIndicator(color: Color(0xFFA60000))
-                        : const Text(
-                      "Login",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                ),
+                const SizedBox(height: 30),
+                _buildUnderlineTextField(_emailController, 'Email'),
+                const SizedBox(height: 10),
+                _buildUnderlineTextField(_passwordController, 'Password', obscureText: true),
+                const SizedBox(height: 10),
+                _isLoadingCodes
+                    ? const CircularProgressIndicator()
+                    : _buildCollegeCodeDropdown(),
+                const SizedBox(height: 10),
+                _buildUnderlineTextField(_rollNumberController, 'Roll Number'),
+                const SizedBox(height: 30),
+                GestureDetector(
+                  onTap: _login,
+                  child: Container(
+                    width: double.infinity,
+                    height: 45,
+                    decoration: BoxDecoration(
+                      color: primaryColor,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Center(
+                      child: _isLoggingIn
+                          ? const CircularProgressIndicator(color: Colors.white)
+                          : const Text(
+                        "Login",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              _buildFooterText(
-                "Don't have an account?",
-                "Sign Up",
-                    () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SignUpPage())),
-              ),
-            ],
+                const SizedBox(height: 20),
+                _buildFooterText(
+                  "Don't have an account?",
+                  "Sign Up",
+                      () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SignUpPage())),
+                ),
+              ],
+            ),
           ),
         ),
       ),
-      floatingActionButton: const FloatingAdminButton(), // Add the floating admin button
+      floatingActionButton: const FloatingAdminButton(),
     );
   }
 
-  Widget _buildUnderlineTextField(TextEditingController controller, String hintText, {bool obscureText = false}) {
+  Widget _buildUnderlineTextField(
+      TextEditingController controller, String hintText,
+      {bool obscureText = false}) {
     return TextField(
       controller: controller,
       obscureText: obscureText,
@@ -152,19 +176,14 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _buildCollegeCodeDropdown() {
-    if (_isLoadingCodes) {
-      return const CircularProgressIndicator(); // Show loading indicator while fetching
-    }
-
     if (collegeCodes.isEmpty) {
       return Center(
         child: Text(
           "No Data Available",
           style: TextStyle(color: grayColor, fontWeight: FontWeight.bold),
         ),
-      ); // Show no data message if no college codes are available
+      );
     }
-
     return DropdownButtonFormField<String>(
       value: selectedCollegeCode,
       hint: Text(
@@ -184,7 +203,7 @@ class _LoginPageState extends State<LoginPage> {
       items: collegeCodes.map((String code) {
         return DropdownMenuItem<String>(
           value: code,
-          child: Text(code, style: TextStyle(color: darkColor)),
+          child: Text(code, style: TextStyle(color: darktext)),
         );
       }).toList(),
       onChanged: (value) {
@@ -206,7 +225,7 @@ class _LoginPageState extends State<LoginPage> {
           child: Text(
             actionText,
             style: const TextStyle(
-              color: Color(0xFFA60000),
+              color: secondaryColor,
               fontWeight: FontWeight.bold,
             ),
           ),

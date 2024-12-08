@@ -7,14 +7,21 @@ class EventDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Define colors
+    const Color backgroundColor = Color(0xFF0D1920);
+    const Color primaryColor = Color(0xFFECE6E6);
+    const Color secondaryColor = Color(0xFF0D6EC5);
+    const Color textColor = Colors.white;
+    const Color secondaryTextColor =Color(0xFF86B2D8);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFDFD), // Dark background
+      backgroundColor: backgroundColor,
       appBar: AppBar(
         title: Text(
           eventDetails['name'] ?? 'Event Details',
-          style: const TextStyle(color: Color(0xFFA60000)), // Secondary color
+          style: const TextStyle(color: secondaryColor),
         ),
-        backgroundColor: const Color(0xFFECE6E6), // Dark primary color
+        backgroundColor: backgroundColor,
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -24,18 +31,18 @@ class EventDetailsPage extends StatelessWidget {
           children: [
             _buildPosterSection(eventDetails['posterUrl'], context),
             const SizedBox(height: 20),
-            _buildSectionHeader('Event Details'),
+            _buildSectionHeader('Event Details', secondaryColor),
             const SizedBox(height: 10),
-            _buildInfoRow('Name', eventDetails['name'] ?? 'Unnamed Event'),
-            _buildInfoRow('Date', eventDetails['date'] ?? 'N/A'),
-            _buildInfoRow('Time', eventDetails['time'] ?? 'N/A'),
-            _buildInfoRow('Venue', eventDetails['venue'] ?? 'N/A'),
-            _buildInfoRow('Admission Fee', eventDetails['admissionFee'] ?? 'Free'),
-            _buildInfoRow('Guests', eventDetails['guests'] ?? 'No guests listed'), // Guests row
-            _buildInfoRow('Restrictions', eventDetails['restrictions'] ?? 'No restrictions'), // Restrictions row
-            _buildInfoRow('College Code', eventDetails['collagecode'] ?? 'N/A'), // Display collegeCode
+            _buildInfoRow('Name', eventDetails['name'] ?? 'Unnamed Event', textColor, secondaryTextColor),
+            _buildInfoRow('Date', eventDetails['date'] ?? 'N/A', textColor, secondaryTextColor),
+            _buildInfoRow('Time', eventDetails['time'] ?? 'N/A', textColor, secondaryTextColor),
+            _buildInfoRow('Venue', eventDetails['venue'] ?? 'N/A', textColor, secondaryTextColor),
+            _buildInfoRow('Admission Fee', eventDetails['admissionFee'] ?? 'Free', textColor, secondaryTextColor),
+            _buildInfoRow('Guests', eventDetails['guests'] ?? 'No guests listed', textColor, secondaryTextColor),
+            _buildInfoRow('Restrictions', eventDetails['restrictions'] ?? 'No restrictions', textColor, secondaryTextColor),
+            _buildInfoRow('College Code', eventDetails['collagecode'] ?? 'N/A', textColor, secondaryTextColor),
             const SizedBox(height: 20),
-            _buildSectionHeader('Club Details'),
+            _buildSectionHeader('Club Details', secondaryColor),
             const SizedBox(height: 10),
             Row(
               children: [
@@ -45,17 +52,17 @@ class EventDetailsPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInfoRow('Club Name', eventDetails['clubName'] ?? 'N/A'),
-                      _buildInfoRow('Club Admin', eventDetails['clubAdmin'] ?? 'N/A'),
+                      _buildInfoRow('Club Name', eventDetails['clubName'] ?? 'N/A', textColor, secondaryTextColor),
+                      _buildInfoRow('Club Admin', eventDetails['clubAdmin'] ?? 'N/A', textColor, secondaryTextColor),
                     ],
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 20),
-            _buildSectionHeader('Activities'),
+            _buildSectionHeader('Activities', secondaryColor),
             const SizedBox(height: 10),
-            _buildActivitiesList(eventDetails['activities'] ?? []),
+            _buildActivitiesList(eventDetails['activities'] ?? [], textColor, secondaryColor),
           ],
         ),
       ),
@@ -92,7 +99,7 @@ class EventDetailsPage extends StatelessWidget {
                             onTap: () {
                               Navigator.of(context).pop();
                             },
-                            child: Icon(
+                            child: const Icon(
                               Icons.close,
                               color: Colors.black,
                               size: 30,
@@ -116,7 +123,7 @@ class EventDetailsPage extends StatelessWidget {
           image: posterUrl != null
               ? DecorationImage(image: NetworkImage(posterUrl), fit: BoxFit.cover)
               : null,
-          color: const Color(0xFF7D7F88), // Gray fallback color
+          color: const Color(0xFF7D7F88),
         ),
         child: posterUrl == null
             ? const Center(
@@ -130,18 +137,18 @@ class EventDetailsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionHeader(String title) {
+  Widget _buildSectionHeader(String title, Color secondaryColor) {
     return Text(
       title,
-      style: const TextStyle(
-        color: Color(0xFFA60000), // Secondary color
+      style: TextStyle(
+        color: secondaryColor,
         fontSize: 18,
         fontWeight: FontWeight.bold,
       ),
     );
   }
 
-  Widget _buildInfoRow(String label, String value) {
+  Widget _buildInfoRow(String label, String value, Color textColor, Color secondaryTextColor) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
@@ -149,8 +156,8 @@ class EventDetailsPage extends StatelessWidget {
         children: [
           Text(
             label,
-            style: const TextStyle(
-              color: Colors.black,
+            style: TextStyle(
+              color: textColor,
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
@@ -159,8 +166,8 @@ class EventDetailsPage extends StatelessWidget {
             child: Text(
               value,
               textAlign: TextAlign.right,
-              style: const TextStyle(
-                color: Color(0xFF7D7F88), // Gray for secondary text
+              style: TextStyle(
+                color: secondaryTextColor,
                 fontSize: 16,
               ),
             ),
@@ -179,11 +186,11 @@ class EventDetailsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildActivitiesList(List<dynamic> activities) {
+  Widget _buildActivitiesList(List<dynamic> activities, Color textColor, Color secondaryColor) {
     if (activities.isEmpty) {
-      return const Text(
+      return Text(
         'No activities available.',
-        style: TextStyle(color: Colors.black, fontSize: 16),
+        style: TextStyle(color: textColor, fontSize: 16),
       );
     }
 
@@ -195,10 +202,10 @@ class EventDetailsPage extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                '•', // Unicode bullet character
+              Text(
+                '•',
                 style: TextStyle(
-                  color: Color(0xFFA60000), // Secondary color
+                  color: secondaryColor,
                   fontSize: 18,
                 ),
               ),
@@ -206,7 +213,7 @@ class EventDetailsPage extends StatelessWidget {
               Expanded(
                 child: Text(
                   activity,
-                  style: const TextStyle(color: Colors.black, fontSize: 16),
+                  style: TextStyle(color: textColor, fontSize: 16),
                 ),
               ),
             ],

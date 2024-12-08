@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'AnnouncementDetailsPage.dart';
+
 class AnnouncementRequestsPage extends StatelessWidget {
   final String collegeCode;
 
@@ -41,6 +42,7 @@ class AnnouncementRequestsPage extends StatelessWidget {
               return Card(
                 margin: const EdgeInsets.all(8.0),
                 elevation: 4,
+                color: const Color(0xFF11232C), // Light secondary color
                 child: ListTile(
                   title: Text(requestData['subject'] ?? 'No title'),
                   subtitle: Text(requestData['collegeCode'] ?? 'No description'),

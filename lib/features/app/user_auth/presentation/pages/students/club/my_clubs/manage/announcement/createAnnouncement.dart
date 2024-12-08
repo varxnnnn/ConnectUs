@@ -33,8 +33,9 @@ class _CreateAnnouncementPageState extends State<CreateAnnouncementPage> {
   XFile? _attachmentImage; // To hold any attachment for the announcement
 
   static const Color primaryColor = Color(0xFFECE6E6);
-  static const Color secondaryColor = Color(0xFFA60000);
-  static const Color grayColor = Color(0xFF4A6572);
+  static const Color secondaryColor = Color(0xFF0D6EC5);
+  static const Color grayColor = Color(0xFFECE6E6);
+  static const Color pagebg = Color(0xFF0D1920);
   static const Color darkColor = Colors.black;
 
   Future<void> _pickImage() async {
@@ -123,8 +124,9 @@ class _CreateAnnouncementPageState extends State<CreateAnnouncementPage> {
       appBar: AppBar(
         title: const Text('Create Announcement'),
         centerTitle: true,
-        backgroundColor: primaryColor,
+        backgroundColor: pagebg,
       ),
+      backgroundColor: pagebg,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15),
         child: SingleChildScrollView(
@@ -146,7 +148,7 @@ class _CreateAnnouncementPageState extends State<CreateAnnouncementPage> {
                   child: Center(
                     child: Text(
                       _attachmentImage != null ? _attachmentImage!.name : 'Select Attachment (Optional)',
-                      style: TextStyle(color: _attachmentImage != null ? darkColor : grayColor),
+                      style: TextStyle(color: _attachmentImage != null ? darkColor : darkColor),
                     ),
                   ),
                 ),
@@ -177,7 +179,7 @@ class _CreateAnnouncementPageState extends State<CreateAnnouncementPage> {
                     child: const Text(
                       "Submit Announcement",
                       style: TextStyle(
-                        color: darkColor,
+                        color: primaryColor,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -208,7 +210,7 @@ class _CreateAnnouncementPageState extends State<CreateAnnouncementPage> {
           borderSide: BorderSide(color: secondaryColor, width: 2),
         ),
       ),
-      style: const TextStyle(color: darkColor),
+      style: const TextStyle(color: primaryColor),
     );
   }
 }

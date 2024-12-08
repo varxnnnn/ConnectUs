@@ -198,8 +198,11 @@ class EventDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Event Details'),
+        centerTitle: true,
+        backgroundColor: const Color(0xFF0D1920), // Dark primary color
+        title: const Text("Event Details"),
       ),
+      backgroundColor: Color(0xFF11232C),
       body: FutureBuilder<DocumentSnapshot>(
         future: FirebaseFirestore.instance
             .collection('users')
@@ -244,7 +247,7 @@ class EventDetailsPage extends StatelessWidget {
                 const SizedBox(height: 16),
 
                 // Event Details Section
-                Text('Event Details',style: Theme.of(context).textTheme.titleLarge),
+                Text('Event Details',style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Color(0xFF0D6EC5))),
                 const Divider(),
                 Text('Event Name: $eventName', style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 8),
@@ -254,7 +257,7 @@ class EventDetailsPage extends StatelessWidget {
                 const SizedBox(height: 16),
 
                 // Event Additional Information Section
-                Text('Event Information', style: Theme.of(context).textTheme.titleLarge),
+                Text('Event Information', style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Color(0xFF0D6EC5))),
                 const Divider(),
                 Text('Admission Fee: $admissionFee'),
                 Text('Guests: $guests'),
@@ -262,7 +265,7 @@ class EventDetailsPage extends StatelessWidget {
                 const SizedBox(height: 16),
 
                 // Club Details Section
-                Text('Club Details', style: Theme.of(context).textTheme.titleLarge),
+                Text('Club Details', style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Color(0xFF0D6EC5))),
                 const Divider(),
                 Text('Club: $clubName'),
                 Text('Admin: $clubAdmin'),

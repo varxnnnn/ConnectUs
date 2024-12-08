@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'Explore_Clubs/clubs.dart';
 import 'Explore_Events/events.dart';
+import 'allCollages/AllCollegesPage.dart';
 import 'my_clubs/my_clubs.dart';
 
 class ClubsPage extends StatefulWidget {
@@ -31,11 +32,14 @@ class _ClubsPageState extends State<ClubsPage> {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  _buildTabButton(0, 'Explore Clubs'),
+                  _buildTabButton(0, 'Explore Collages'),
                   const SizedBox(width: 10),
-                  _buildTabButton(1, 'Explore Events'),
+                  _buildTabButton(1, 'Explore Clubs'),
                   const SizedBox(width: 10),
-                  _buildTabButton(2, 'My Clubs'),
+                  _buildTabButton(2, 'Explore Events'),
+                  const SizedBox(width: 10),
+                  _buildTabButton(3, 'My Clubs'),
+
                 ],
               ),
             ),
@@ -50,7 +54,8 @@ class _ClubsPageState extends State<ClubsPage> {
                   });
                 },
                 children: [
-                  AllClubsPage(collegeCode: widget.collegeCode,CrollNumber: widget.rollNumber),
+                  AllCollegesPage(),
+                  AllClubsPage(collegeCode: widget.collegeCode, CrollNumber: widget.rollNumber),
                   AllEvents(collagecode: widget.collegeCode),
                   MyClubsPage(collegeCode: widget.collegeCode, rollNumber: widget.rollNumber),
                 ],
@@ -67,14 +72,18 @@ class _ClubsPageState extends State<ClubsPage> {
       onTap: () {
         setState(() {
           _selectedOptionIndex = index;
-          _pageController.jumpToPage(index); // Jump to the selected page
+          _pageController.animateToPage(
+            index,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          ); // Use animateToPage for smoother transition
         });
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         decoration: BoxDecoration(
           color: _selectedOptionIndex == index
-              ? const Color(0xFFA60000) // Highlight color if selected
+              ? const Color(0xFF0D6EC5) // Highlight color if selected
               : const Color(0xFF232322), // Default color
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: Colors.grey.shade700),

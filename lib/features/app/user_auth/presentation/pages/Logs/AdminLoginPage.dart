@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../admin/AdminDashboardPage.dart';
-import 'AddCollegePage.dart'; // Import AddCollegePage
-
+import 'AddCollegePage.dart';
 
 class AdminLoginPage extends StatefulWidget {
   const AdminLoginPage({super.key});
@@ -18,13 +17,11 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  TextEditingController _adminIdController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _adminIdController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   bool _isLoggingIn = false;
-
-  String? _selectedCollegeCode; // Variable to hold selected college code
-
+  String? _selectedCollegeCode;
   List<String> _collegeCodes = [];
 
   @override
@@ -35,9 +32,8 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
 
   Future<void> _fetchCollegeCodes() async {
     try {
-      DocumentSnapshot snapshot = await _firestore.collection('codes')
-          .doc('allCodes')
-          .get();
+      DocumentSnapshot snapshot =
+      await _firestore.collection('codes').doc('allCodes').get();
       if (snapshot.exists) {
         List<dynamic> codes = snapshot.get('collegeCodes') ?? [];
         setState(() {
@@ -49,11 +45,6 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
     }
   }
 
-  static const Color primaryColor = Color(0xFF121111);
-  static const Color secondaryColor = Color(0xFFA60000);
-  static const Color grayColor = Color(0xFF7D7F88);
-  static const Color darkColor = Colors.black;
-
   @override
   void dispose() {
     _adminIdController.dispose();
@@ -61,102 +52,129 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
     super.dispose();
   }
 
+  static const LinearGradient primaryGradient = LinearGradient(
+    colors: [
+      Color(0xFF041A2E),
+      Color(0xFF193356),
+      Color(0xFF041D33),
+    ],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    stops: [0.1, 0.7, 1.0],
+  );
+
+  static const Color primaryColor = Color(0xFF0D6EC5);
+  static const Color secondaryColor = Color(0xFF86B2D8);
+  static const Color grayColor = Color(0xFFE9ECED);
+  static const Color darkColor = Colors.white;
+  static const Color darktext = Colors.white;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                "Admin Login",
-                style: TextStyle(fontSize: 27, fontWeight: FontWeight.bold, color: secondaryColor),
-              ),
-              const SizedBox(height: 30),
-              _buildUnderlineTextField(_adminIdController, 'Admin ID'),
-              const SizedBox(height: 10),
-              _buildUnderlineTextField(_passwordController, 'Password', obscureText: true),
-              const SizedBox(height: 10),
-              _buildCollegeCodeDropdown(), // College code dropdown
-              const SizedBox(height: 30),
-              GestureDetector(
-                onTap: _login,
-                child: Container(
-                  width: double.infinity,
-                  height: 45,
-                  decoration: BoxDecoration(
-                    color: secondaryColor,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Center(
-                    child: _isLoggingIn
-                        ? const CircularProgressIndicator(color: Color(0xFFA60000))
-                        : const Text(
-                      "Login",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+      body: Container(
+        decoration: const BoxDecoration(gradient: primaryGradient),
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  "Admin Login",
+                  style: TextStyle(
+                      fontSize: 27,
+                      fontWeight: FontWeight.bold,
+                      color: secondaryColor),
+                ),
+                const SizedBox(height: 30),
+                _buildUnderlineTextField(_adminIdController, 'Admin ID'),
+                const SizedBox(height: 10),
+                _buildUnderlineTextField(_passwordController, 'Password',
+                    obscureText: true),
+                const SizedBox(height: 10),
+                _buildCollegeCodeDropdown(),
+                const SizedBox(height: 30),
+                GestureDetector(
+                  onTap: _login,
+                  child: Container(
+                    width: double.infinity,
+                    height: 45,
+                    decoration: BoxDecoration(
+                      color: primaryColor,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Center(
+                      child: _isLoggingIn
+                          ? const CircularProgressIndicator(color: Colors.white)
+                          : const Text(
+                        "Login",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 30),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("I'm a student", style: TextStyle(color: grayColor)),
-                  const SizedBox(width: 5),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text(
-                      "Back to Login",
-                      style: TextStyle(
-                        color: Color(0xFFA60000),
-                        fontWeight: FontWeight.bold,
+                const SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("I'm a student !",
+                        style: TextStyle(color: grayColor)),
+                    const SizedBox(width: 5),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text(
+                        "Back to Login",
+                        style: TextStyle(
+                          color: primaryColor,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 40),
-              // Add College button
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => AddCollegePage()),
-                  );
-                },
-                child: const Text(
-                  "Add a College to Community",
-                  style: TextStyle(color: secondaryColor, fontWeight: FontWeight.bold),
+                  ],
                 ),
-              ),
-            ],
+                const SizedBox(height: 40),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AddCollegePage()),
+                    );
+                  },
+                  child: const Text(
+                    "Add a College to Community",
+                    style: TextStyle(
+                        color: secondaryColor, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildUnderlineTextField(TextEditingController controller, String hintText, {bool obscureText = false}) {
+  Widget _buildUnderlineTextField(TextEditingController controller,
+      String hintText, {bool obscureText = false}) {
     return TextField(
       controller: controller,
       obscureText: obscureText,
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: TextStyle(color: grayColor),
+        hintStyle: const TextStyle(color: grayColor),
         filled: true,
         fillColor: Colors.transparent,
-        enabledBorder: UnderlineInputBorder(
+        enabledBorder: const UnderlineInputBorder(
           borderSide: BorderSide(color: grayColor),
         ),
-        focusedBorder: UnderlineInputBorder(
+        focusedBorder: const UnderlineInputBorder(
           borderSide: BorderSide(color: secondaryColor, width: 2),
         ),
       ),
@@ -164,7 +182,6 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
     );
   }
 
-  // Dropdown button for college code selection
   Widget _buildCollegeCodeDropdown() {
     return DropdownButtonFormField<String>(
       value: _selectedCollegeCode,
@@ -176,10 +193,10 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
       items: _collegeCodes.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
-          child: Text(value),
+          child: Text(value, style: const TextStyle(color: darktext)),
         );
       }).toList(),
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
         hintText: 'Select College Code',
         hintStyle: TextStyle(color: grayColor),
         filled: true,
@@ -200,7 +217,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
     });
 
     try {
-      final String collegeCode = _selectedCollegeCode ?? ''; // Use selected college code
+      final String collegeCode = _selectedCollegeCode ?? '';
       final String adminId = _adminIdController.text;
 
       if (collegeCode.isEmpty) {
@@ -208,7 +225,6 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
         return;
       }
 
-      // Check Firestore for the admin credentials
       DocumentSnapshot<Map<String, dynamic>> adminSnapshot = await _firestore
           .collection('users')
           .doc(collegeCode)
@@ -228,31 +244,23 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
       }
 
       final String storedPassword = adminData['adminPassword'] ?? '';
-      if (storedPassword.isEmpty) {
-        _showToast(message: "Password not found.");
-        return;
-      }
-
-      // Check if the password matches
       if (_passwordController.text != storedPassword) {
         _showToast(message: "Incorrect password.");
         return;
       }
 
-      // Login successful
       _showToast(message: "Login successful!");
 
-      // Save the college code and admin ID in shared_preferences
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('collegeCode', collegeCode);
-      await prefs.setString('adminId', adminId); // Optionally save the adminId too
+      await prefs.setString('adminId', adminId);
 
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => AdminDashboardPage(
-            collegeCode: collegeCode, // Pass the college code
-            adminId: adminId, // Pass the adminId as well
+            collegeCode: collegeCode,
+            adminId: adminId,
           ),
         ),
       );
@@ -270,7 +278,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
       msg: message,
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
-      backgroundColor: Colors.black,
+      backgroundColor: darkColor,
       textColor: Colors.white,
       fontSize: 16.0,
     );

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:project1/features/app/user_auth/presentation/pages/admin/permissions/permission_page.dart';
-import 'package:project1/features/app/user_auth/presentation/pages/admin/profile_page.dart';
+import 'package:project1/features/app/user_auth/presentation/pages/admin/profile/profile_page.dart';
 import 'home_admin.dart';
 
 class AdminDashboardPage extends StatefulWidget {
@@ -42,6 +42,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF0D1920), // Page background color
       body: _pages[_selectedIndex], // Switch between pages based on the selected index
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -59,8 +60,9 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Color(0xFFA60000),
-        unselectedItemColor: Color(0xFF333337),// Change selected item color to 0xFFF9AA33
+        selectedItemColor: const Color(0xFF0D6EC5),
+        unselectedItemColor: const Color(0xFFCACAD5),
+        backgroundColor: const Color(0xFF11232C), // Bottom nav background color
         onTap: _onItemTapped,
       ),
     );

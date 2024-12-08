@@ -7,10 +7,17 @@ class EventDetailsPage extends StatelessWidget {
 
   const EventDetailsPage({Key? key, required this.eventId, required this.clubId}) : super(key: key);
 
-  // Method to fetch event details from Firestore based on eventId
+  // Define color constants
+  static const Color primaryColor = Color(0xFF1F2628);
+  static const Color secondaryColor = Color(0xFF0D6EC5);
+  static const Color textColor = Colors.white;
+  static const Color grayColor = Color(
+      0xFF86B2D8);
+  static const Color backgroundColor = Color(0xFF0D1920);
+
+  // Fetch event details from Firestore
   Future<Map<String, dynamic>> _getEventDetails() async {
     try {
-      // Fetch event details for the specific eventId from the Firestore 'myEvents' collection
       DocumentSnapshot eventSnapshot = await FirebaseFirestore.instance
           .collection('allClubs')
           .doc(clubId)
@@ -18,7 +25,6 @@ class EventDetailsPage extends StatelessWidget {
           .doc(eventId)
           .get();
 
-      // Check if the document exists
       if (eventSnapshot.exists) {
         return eventSnapshot.data() as Map<String, dynamic>;
       } else {
@@ -47,17 +53,16 @@ class EventDetailsPage extends StatelessWidget {
           return const Center(child: Text('Event details not available.'));
         }
 
-        // Event details
         final event = snapshot.data!;
 
         return Scaffold(
-          backgroundColor: const Color(0xFFFFFDFD), // Dark background
+          backgroundColor: backgroundColor,
           appBar: AppBar(
             title: Text(
               event['name'] ?? 'Event Details',
-              style: const TextStyle(color: Color(0xFFA60000)), // Secondary color
+              style: const TextStyle(color: secondaryColor),
             ),
-            backgroundColor: const Color(0xFFFFFDFD), // Dark primary color
+            backgroundColor: backgroundColor,
             centerTitle: true,
           ),
           body: SingleChildScrollView(
@@ -107,6 +112,7 @@ class EventDetailsPage extends StatelessWidget {
     );
   }
 
+  // Poster Section with Full-Screen View
   Widget _buildPosterSection(String? posterUrl, BuildContext context) {
     return GestureDetector(
       onTap: () {
@@ -119,33 +125,7 @@ class EventDetailsPage extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () => Navigator.of(context).pop(),
                   child: InteractiveViewer(
-                    child: Stack(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            image: DecorationImage(
-                              image: NetworkImage(posterUrl),
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          top: 10,
-                          right: 10,
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Icon(
-                              Icons.close,
-                              color: Colors.black,
-                              size: 30,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                    child: Image.network(posterUrl, fit: BoxFit.contain),
                   ),
                 ),
               );
@@ -161,13 +141,14 @@ class EventDetailsPage extends StatelessWidget {
           image: posterUrl != null
               ? DecorationImage(image: NetworkImage(posterUrl), fit: BoxFit.cover)
               : null,
-          color: const Color(0xFF7D7F88), // Gray fallback color
+          color: grayColor, // Fallback color
         ),
         child: posterUrl == null
             ? const Center(
           child: Text(
             'No Poster Available',
-            style: TextStyle(color: Colors.black, fontSize: 16),
+            style: TextStyle(color: Color(
+                0xFF86B2D8), fontSize: 16),
           ),
         )
             : null,
@@ -179,7 +160,7 @@ class EventDetailsPage extends StatelessWidget {
     return Text(
       title,
       style: const TextStyle(
-        color: Color(0xFFA60000), // Secondary color
+        color: secondaryColor,
         fontSize: 18,
         fontWeight: FontWeight.bold,
       ),
@@ -195,7 +176,7 @@ class EventDetailsPage extends StatelessWidget {
           Text(
             label,
             style: const TextStyle(
-              color: Colors.black,
+              color: Colors.white,
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
@@ -204,8 +185,8 @@ class EventDetailsPage extends StatelessWidget {
             child: Text(
               value,
               textAlign: TextAlign.right,
-              style: const TextStyle(
-                color: Color(0xFF7D7F88), // Gray for secondary text
+              style: TextStyle(
+                color: grayColor,
                 fontSize: 16,
               ),
             ),
@@ -228,7 +209,8 @@ class EventDetailsPage extends StatelessWidget {
     if (activities.isEmpty) {
       return const Text(
         'No activities available.',
-        style: TextStyle(color: Colors.black, fontSize: 16),
+        style: TextStyle(color: Color(
+            0xFF86B2D8), fontSize: 16),
       );
     }
 
@@ -241,17 +223,15 @@ class EventDetailsPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                '•', // Unicode bullet character
-                style: TextStyle(
-                  color: Color(0xFFA60000), // Secondary color
-                  fontSize: 18,
-                ),
+                '•',
+                style: TextStyle(color: secondaryColor, fontSize: 18),
               ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   activity,
-                  style: const TextStyle(color: Colors.black, fontSize: 16),
+                  style: const TextStyle(color: Color(
+                      0xFF86B2D8), fontSize: 16),
                 ),
               ),
             ],

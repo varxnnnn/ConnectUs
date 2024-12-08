@@ -5,60 +5,72 @@ class EventDetailPage extends StatelessWidget {
 
   const EventDetailPage({Key? key, required this.event}) : super(key: key);
 
+  // Define colors
+  static const Color primaryColor = Color(0xFF0D1920); // Dark primary color
+  static const Color secondaryColor = Color(0xFFF9AA33); // Light secondary color
+  static const Color textColor = Colors.white; // Main text color
+  static const Color secondaryTextColor = Color(0xFF7D7F88); // Gray for secondary text
+  static const Color errorColor = Color(0xFF0D6EC5); // Error/Highlight color
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(event['name'] ?? 'Event Details'),
-        backgroundColor: const Color(0xFFECE6E6), // Dark primary color
+        backgroundColor: primaryColor,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Event Poster
-              _buildPosterSection(event['posterUrl'], context),
-              const SizedBox(height: 16),
+      body: Container(
+        color: primaryColor, // Set background color
+        width: double.infinity,
+        height: double.infinity, // Extend to bottom of screen
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Event Poster
+                _buildPosterSection(event['posterUrl'], context),
+                const SizedBox(height: 16),
 
-              // Club Details Section
-              _buildSectionHeader('Club Details'),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  _buildClubLogo(event['clubLogoUrl']),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildInfoRow('Club Name', event['clubName'] ?? 'N/A'),
-                        _buildInfoRow('Club Admin', event['clubAdmin'] ?? 'N/A'),
-                      ],
+                // Club Details Section
+                _buildSectionHeader('Club Details'),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    _buildClubLogo(event['clubLogoUrl']),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildInfoRow('Club Name', event['clubName'] ?? 'N/A'),
+                          _buildInfoRow('Club Admin', event['clubAdmin'] ?? 'N/A'),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
 
-              // New Event Section
-              const SizedBox(height: 24),
-              _buildSectionHeader('Event Information'),
-              const SizedBox(height: 8),
-              _buildInfoRow('Name', event['name'] ?? 'N/A'),
-              _buildInfoRow('Date', event['date'] ?? 'N/A'),
-              _buildInfoRow('Time', event['time'] ?? 'N/A'),
-              _buildInfoRow('Venue', event['venue'] ?? 'N/A'),
-              _buildInfoRow('Guests', event['guests'] ?? 'N/A'),
-              _buildInfoRow('Restrictions', event['restrictions'] ?? 'N/A'),
-              _buildInfoRow('Admission Fee', event['admissionFee'] ?? 'Free'),
+                // Event Information Section
+                const SizedBox(height: 24),
+                _buildSectionHeader('Event Information'),
+                const SizedBox(height: 8),
+                _buildInfoRow('Name', event['name'] ?? 'N/A'),
+                _buildInfoRow('Date', event['date'] ?? 'N/A'),
+                _buildInfoRow('Time', event['time'] ?? 'N/A'),
+                _buildInfoRow('Venue', event['venue'] ?? 'N/A'),
+                _buildInfoRow('Guests', event['guests'] ?? 'N/A'),
+                _buildInfoRow('Restrictions', event['restrictions'] ?? 'N/A'),
+                _buildInfoRow('Admission Fee', event['admissionFee'] ?? 'Free'),
 
-              // Activities Section
-              const SizedBox(height: 24),
-              _buildSectionHeader('Activities'),
-              const SizedBox(height: 8),
-              _buildActivitiesList(event['activities'] ?? []),
-            ],
+                // Activities Section
+                const SizedBox(height: 24),
+                _buildSectionHeader('Activities'),
+                const SizedBox(height: 8),
+                _buildActivitiesList(event['activities'] ?? []),
+              ],
+            ),
           ),
         ),
       ),
@@ -96,7 +108,7 @@ class EventDetailPage extends StatelessWidget {
                             onTap: () {
                               Navigator.of(context).pop();
                             },
-                            child: Icon(
+                            child: const Icon(
                               Icons.close,
                               color: Colors.black,
                               size: 30,
@@ -120,13 +132,13 @@ class EventDetailPage extends StatelessWidget {
           image: posterUrl != null
               ? DecorationImage(image: NetworkImage(posterUrl), fit: BoxFit.cover)
               : null,
-          color: const Color(0xFF050505), // Gray fallback color
+          color: primaryColor, // Fallback color
         ),
         child: posterUrl == null
             ? const Center(
           child: Text(
             'No Poster Available',
-            style: TextStyle(color: Colors.black, fontSize: 16),
+            style: TextStyle(color: Colors.white, fontSize: 16),
           ),
         )
             : null,
@@ -139,7 +151,7 @@ class EventDetailPage extends StatelessWidget {
     return Text(
       title,
       style: const TextStyle(
-        color: Color(0xFFA60000), // Secondary color
+        color: errorColor, // Highlight color
         fontSize: 18,
         fontWeight: FontWeight.bold,
       ),
@@ -156,7 +168,7 @@ class EventDetailPage extends StatelessWidget {
           Text(
             label,
             style: const TextStyle(
-              color: Colors.black,
+              color: textColor,
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
@@ -166,7 +178,7 @@ class EventDetailPage extends StatelessWidget {
               value,
               textAlign: TextAlign.right,
               style: const TextStyle(
-                color: Color(0xFF7D7F88), // Gray for secondary text
+                color: secondaryTextColor,
                 fontSize: 16,
               ),
             ),
@@ -191,7 +203,7 @@ class EventDetailPage extends StatelessWidget {
     if (activities.isEmpty) {
       return const Text(
         'No activities available.',
-        style: TextStyle(color: Colors.black, fontSize: 16),
+        style: TextStyle(color: textColor, fontSize: 16),
       );
     }
 
@@ -206,7 +218,7 @@ class EventDetailPage extends StatelessWidget {
               const Text(
                 '•', // Unicode bullet character
                 style: TextStyle(
-                  color: Color(0xFFA60000), // Secondary color
+                  color: errorColor, // Highlight color
                   fontSize: 18,
                 ),
               ),
@@ -214,7 +226,7 @@ class EventDetailPage extends StatelessWidget {
               Expanded(
                 child: Text(
                   activity,
-                  style: const TextStyle(color: Colors.black, fontSize: 16),
+                  style: const TextStyle(color: textColor, fontSize: 16),
                 ),
               ),
             ],

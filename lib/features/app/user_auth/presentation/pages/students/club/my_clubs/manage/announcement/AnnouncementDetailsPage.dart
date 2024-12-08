@@ -28,36 +28,29 @@ class AnnouncementDetailsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Announcement Details'),
-        backgroundColor: Color(0xFFECE6E6),
+        backgroundColor: Color(0xFF0D1920),
       ),
+      backgroundColor: Color(0xFF0D1920),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Subject: $subject', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFFA60000))),
+              // Subject and Content
+              Text('Subject: $subject', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF0D6EC5))),
               const SizedBox(height: 8),
+              Text('Content: $content', style: const TextStyle(fontSize: 18, color: Colors.white)),
+              const SizedBox(height: 16),
+
+              // Created On
               Text('Created on: $formattedDate', style: const TextStyle(fontSize: 16, color: Colors.grey)),
               const SizedBox(height: 16),
 
-              Text('Admin Name: $adminName', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              Text('Branch: $adminBranch', style: const TextStyle(fontSize: 16)),
-              Text('Roll Number: $adminRollNumber', style: const TextStyle(fontSize: 16)),
-              if (adminProfilePic.isNotEmpty) ...[
-                const SizedBox(height: 8),
-                ClipOval(
-                  child: Image.network(adminProfilePic, width: 50, height: 50, fit: BoxFit.cover),
-                ),
-              ],
-              const SizedBox(height: 16),
-
-              Text('College Code: ${announcementData['collegeCode']}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 16),
-
-              Text('Club Name: $clubName', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              Text('Club Aim: $clubAim', style: const TextStyle(fontSize: 16)),
-              Text('Club Category: $clubCategory', style: const TextStyle(fontSize: 16)),
+              // Club Details
+              Text('Club Name: $clubName', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+              Text('Club Aim: $clubAim', style: const TextStyle(fontSize: 16, color: Colors.white)),
+              Text('Club Category: $clubCategory', style: const TextStyle(fontSize: 16, color: Colors.white)),
               if (clubLogoUrl.isNotEmpty) ...[
                 const SizedBox(height: 8),
                 ClipOval(
@@ -66,7 +59,16 @@ class AnnouncementDetailsPage extends StatelessWidget {
               ],
               const SizedBox(height: 16),
 
-              Text('Content: $content', style: const TextStyle(fontSize: 18)),
+              // Admin Details
+              Text('Admin Name: $adminName', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+              Text('Branch: $adminBranch', style: const TextStyle(fontSize: 16, color: Colors.white)),
+              Text('Roll Number: $adminRollNumber', style: const TextStyle(fontSize: 16, color: Colors.white)),
+              if (adminProfilePic.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                ClipOval(
+                  child: Image.network(adminProfilePic, width: 50, height: 50, fit: BoxFit.cover),
+                ),
+              ],
             ],
           ),
         ),

@@ -32,6 +32,7 @@ class _HomePageState extends State<ChatBotScreen> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
+        backgroundColor: const Color(0xFF0D1920), // Dark primary color
         title: const Text("Bot"),
       ),
       body: _buildUI(),
@@ -45,7 +46,7 @@ class _HomePageState extends State<ChatBotScreen> {
           IconButton(
             onPressed: _sendMediaMessage,
             icon: const Icon(Icons.image),
-            color: Color(0xFFA60000), // Set the send button color
+            color: Color(0xFF0D6EC5), // Set the send button color
 
           ),
         ],
@@ -53,7 +54,7 @@ class _HomePageState extends State<ChatBotScreen> {
           return IconButton(
             onPressed: onSend,
             icon: const Icon(Icons.send),
-            color: Color(0xFFA60000), // Set the send button color
+            color: Color(0xFF0D6EC5), // Set the send button color
           );
         },
       ),

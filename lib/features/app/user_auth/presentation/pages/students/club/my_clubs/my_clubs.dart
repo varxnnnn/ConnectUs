@@ -228,7 +228,7 @@ class _MyClubsPageState extends State<MyClubsPage> {
           }
         },
         child: const Icon(Icons.add),
-        backgroundColor: const Color(0xFFA60000),
+        backgroundColor: const Color(0xFF0D6EC5),
       ),
 
     );

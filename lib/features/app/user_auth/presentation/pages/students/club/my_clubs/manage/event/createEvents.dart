@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:project1/features/app/user_auth/presentation/pages/students/club/my_clubs/createClubPage.dart';
 
 class CreateEventPage extends StatefulWidget {
   final Map<String, dynamic> clubDetails;
@@ -22,6 +23,13 @@ class CreateEventPage extends StatefulWidget {
 }
 
 class _CreateEventPageState extends State<CreateEventPage> {
+  // Define colors
+  final Color primaryColor = const Color(0xFF0D6EC5);
+  final Color secondaryColor = const Color(0xFF0D1920);
+  final Color darkColor = Colors.white;
+  final Color grayColor = Colors.grey;
+  final Color errorColor = Colors.black;
+
   final _formKey = GlobalKey<FormState>();
   final _eventNameController = TextEditingController();
   final _eventDateController = TextEditingController();
@@ -36,7 +44,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
   List<String> _activities = [];
 
   File? _eventPoster;
-  File? _eventLogo;
   final picker = ImagePicker();
 
   @override
@@ -52,15 +59,11 @@ class _CreateEventPageState extends State<CreateEventPage> {
     super.dispose();
   }
 
-  Future<void> _pickImage(bool isPoster) async {
+  Future<void> _pickImage() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     setState(() {
       if (pickedFile != null) {
-        if (isPoster) {
-          _eventPoster = File(pickedFile.path);
-        } else {
-          _eventLogo = File(pickedFile.path);
-        }
+        _eventPoster = File(pickedFile.path);
       }
     });
   }
@@ -73,8 +76,8 @@ class _CreateEventPageState extends State<CreateEventPage> {
     } catch (e) {
       Fluttertoast.showToast(
         msg: "Image upload failed: $e",
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
+        backgroundColor: errorColor,
+        textColor: darkColor,
       );
       return null;
     }
@@ -89,40 +92,14 @@ class _CreateEventPageState extends State<CreateEventPage> {
     }
   }
 
-  Future<void> _selectDate() async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-
-    if (picked != null && picked != DateTime.now()) {
-      setState(() {
-        _eventDateController.text = "${picked.toLocal()}".split(' ')[0];
-      });
-    }
-  }
-
-  Future<void> _selectTime() async {
-    final TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-
-    if (picked != null) {
-      setState(() {
-        _eventTimeController.text = "${picked.format(context)}";
-      });
-    }
-  }
-
   Future<void> _submitEvent() async {
     if (_formKey.currentState?.validate() ?? false) {
       String? posterUrl;
-
       if (_eventPoster != null) {
-        posterUrl = await _uploadImage(_eventPoster!, 'events/${widget.collegeCode}/${widget.rollNumber}/${_eventNameController.text}_poster.jpg');
+        posterUrl = await _uploadImage(
+          _eventPoster!,
+          'events/${widget.collegeCode}/${widget.rollNumber}/${_eventNameController.text}_poster.jpg',
+        );
       }
 
       final eventData = {
@@ -138,10 +115,10 @@ class _CreateEventPageState extends State<CreateEventPage> {
         'createdAt': FieldValue.serverTimestamp(),
         'collegeCode': widget.collegeCode,
         'rollNumber': widget.rollNumber,
-        'clubName': widget.clubDetails['name'],  // Club Name
-        'clubAdmin': widget.clubDetails['adminName'],  // Club Admin
-        'clubLogoUrl': widget.clubDetails['logoUrl'],  // Club Logo URL
-        'clubId': widget.clubDetails['clubId'],  // Club Id (added)
+        'clubName': widget.clubDetails['name'],
+        'clubAdmin': widget.clubDetails['adminName'],
+        'clubLogoUrl': widget.clubDetails['logoUrl'],
+        'clubId': widget.clubDetails['clubId'],
       };
 
       try {
@@ -149,20 +126,19 @@ class _CreateEventPageState extends State<CreateEventPage> {
             .collection('users')
             .doc(widget.collegeCode)
             .collection('eventRequests')
-            .add(eventData);  // Using .add() to create a new document in eventRequests
+            .add(eventData);
 
         Fluttertoast.showToast(
           msg: "Event requested successfully!",
-          backgroundColor: Color(0xFFA60000),
-          textColor: Colors.white,
+          backgroundColor: errorColor,
+          textColor: darkColor,
         );
-
         Navigator.pop(context);
       } catch (e) {
         Fluttertoast.showToast(
           msg: "Error requesting event: $e",
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
+          backgroundColor: errorColor,
+          textColor: darkColor,
         );
       }
     }
@@ -173,7 +149,9 @@ class _CreateEventPageState extends State<CreateEventPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create Event'),
+        backgroundColor: const Color(0xFF0D1920), // Change AppBar color
       ),
+      backgroundColor: secondaryColor,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -181,45 +159,58 @@ class _CreateEventPageState extends State<CreateEventPage> {
           child: ListView(
             children: [
               _buildUnderlinedTextInput('Event Name', _eventNameController),
-              GestureDetector(
-                onTap: _selectDate,  // Date picker on tap
-                child: AbsorbPointer(
-                  child: _buildUnderlinedTextInput('Event Date (Tap to select)', _eventDateController),
-                ),
-              ),
-              GestureDetector(
-                onTap: _selectTime,  // Time picker on tap
-                child: AbsorbPointer(
-                  child: _buildUnderlinedTextInput('Event Time (Tap to select)', _eventTimeController),
-                ),
-              ),
+              _buildUnderlinedTextInput('Event Date', _eventDateController),
+              _buildUnderlinedTextInput('Event Time', _eventTimeController),
               _buildUnderlinedTextInput('Venue', _venueController),
-
               _buildActivitiesSection(),
-
               SwitchListTile(
                 title: const Text('Admission Fee'),
                 value: _isPaidEvent,
                 onChanged: (value) => setState(() => _isPaidEvent = value),
-                subtitle: Text(_isPaidEvent ? 'Paid' : 'Free'),
               ),
               if (_isPaidEvent) _buildUnderlinedTextInput('Enter Fee Amount', _admissionFeeController, keyboardType: TextInputType.number),
-
               _buildUnderlinedTextInput('Guests', _guestController),
               _buildUnderlinedTextInput('Application Links', _restrictionsController),
-
-              _buildImagePicker('Select Event Poster', true, _eventPoster),
-
+              _buildImagePicker(),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _submitEvent,
-                style: ElevatedButton.styleFrom(backgroundColor: Color(0xFFA60000)), // Light secondary color
+                style: ElevatedButton.styleFrom(backgroundColor: primaryColor),
                 child: const Text('Submit Event'),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildImagePicker() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Event Poster',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 10),
+        GestureDetector(
+          onTap: _pickImage,
+          child: Container(
+            height: 150,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.grey[200],
+            ),
+            child: _eventPoster != null
+                ? Image.file(_eventPoster!, fit: BoxFit.cover)
+                : const Center(child: Icon(Icons.add_a_photo, size: 50, color: Colors.grey)),
+          ),
+        ),
+        const SizedBox(height: 10),
+      ],
     );
   }
 
@@ -231,12 +222,20 @@ class _CreateEventPageState extends State<CreateEventPage> {
         keyboardType: keyboardType,
         decoration: InputDecoration(
           labelText: label,
-          border: UnderlineInputBorder(),
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Color(0xFFA60000)), // Highlight with the secondary color
+          labelStyle: const TextStyle(color: Colors.white),
+          enabledBorder: const UnderlineInputBorder(
+            borderSide: BorderSide(color: Color(0xFF86B2D8)),
+          ),
+          focusedBorder: const UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.blue),
           ),
         ),
-        validator: (value) => value == null || value.isEmpty ? 'Please enter $label' : null,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter $label';
+          }
+          return null;
+        },
       ),
     );
   }
@@ -245,56 +244,29 @@ class _CreateEventPageState extends State<CreateEventPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Activities (add up to 5)', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        const Text('Activities', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xFF0D6EC5))),
         Row(
           children: [
             Expanded(
               child: TextFormField(
                 controller: _activityController,
                 decoration: const InputDecoration(
-                  hintText: 'Add an activity',
-                  border: UnderlineInputBorder(),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFFA60000)), // Highlight with the secondary color
+                  hintText: 'Enter an activity',
+                  border: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blue), // Blue underline color
                   ),
                 ),
               ),
             ),
-            IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: _addActivity,
-              color: Color(0xFFA60000), // Light secondary color for button
-            ),
+            IconButton(icon: const Icon(Icons.add), onPressed: _addActivity),
           ],
         ),
-        const SizedBox(height: 10),
         Wrap(
           spacing: 8.0,
-          runSpacing: 4.0,
-          children: _activities.map((activity) {
-            return Chip(label: Text(activity));
-          }).toList(),
+          children: _activities.map((activity) => Chip(label: Text(activity), onDeleted: () => setState(() => _activities.remove(activity)))).toList(),
         ),
+        const SizedBox(height: 10),
       ],
-    );
-  }
-
-  Widget _buildImagePicker(String label, bool isPoster, File? imageFile) {
-    return GestureDetector(
-      onTap: () => _pickImage(isPoster),
-      child: Container(
-        padding: const EdgeInsets.all(8.0),
-        color: Color(0xFF7E6377), // Dark color for the image picker container
-        child: Column(
-          children: [
-            Text(label, style: TextStyle(color: Colors.white)),
-            const SizedBox(height: 10),
-            imageFile == null
-                ? const Icon(Icons.add_a_photo, color: Colors.white)
-                : Image.file(imageFile, width: 100, height: 100),
-          ],
-        ),
-      ),
     );
   }
 }

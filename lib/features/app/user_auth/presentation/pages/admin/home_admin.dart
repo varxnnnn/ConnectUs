@@ -71,7 +71,7 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
                     fontSize: 32,
                     fontFamily: 'Archivo',
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFFA60000),
+                    color: Color(0xFF0D6EC5),
                   ),
                 ),
               ),
@@ -85,7 +85,7 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
                     fontSize: 32,
                     fontFamily: 'Archivo',
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFFA60000),
+                    color: Color(0xFF0D6EC5),
                   ),
                 ),
               ),
@@ -99,7 +99,7 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
                     fontSize: 32,
                     fontFamily: 'Archivo',
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFFA60000),
+                    color: Color(0xFF0D6EC5),
                   ),
                 ),
               ),
@@ -253,8 +253,14 @@ class _HomeAdminPageState extends State<HomeAdminPage> {
                   ),
                   elevation: 5,
                   child: ListTile(
-                    title: Text(title),
-                    subtitle: Text(content),
+                    title: Text(
+                      title,
+                      style: TextStyle(color: Colors.black), // Set text color to black
+                    ),
+                    subtitle: Text(
+                      content,
+                      style: TextStyle(color: Colors.black), // Set text color to black
+                    ),
                     onTap: () {
                       // Handle tap if needed
                     },

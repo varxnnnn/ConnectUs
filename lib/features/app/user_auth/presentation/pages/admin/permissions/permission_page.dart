@@ -89,8 +89,8 @@ class _PermissionsPageState extends State<PermissionsPage> {
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         decoration: BoxDecoration(
           color: _selectedOptionIndex == index
-              ? const Color(0xFFA60000) // Highlight color if selected
-              : const Color(0xFF333337), // Default color
+              ? const Color(0xFF0D6EC5) // Highlight color if selected
+              : const Color(0xFFCACAD5), // Default color
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: Colors.grey.shade700),
         ),

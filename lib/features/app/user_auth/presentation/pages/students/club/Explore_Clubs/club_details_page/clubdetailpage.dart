@@ -1,6 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'announcement_tab.dart';
 import 'events_tab.dart';
@@ -13,7 +13,9 @@ class ClubDetailsPage extends StatefulWidget {
   const ClubDetailsPage({
     Key? key,
     required this.clubDetails,
-    required this.collegeCode, required clubId, required this.CrollNumber,
+    required this.collegeCode,
+    required clubId,
+    required this.CrollNumber,
   }) : super(key: key);
 
   @override
@@ -25,6 +27,19 @@ class _ClubDetailsPageState extends State<ClubDetailsPage> {
   int? _memberCount;
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+
+  static const Color primaryColor = Color(
+      0xFF0D6EC5); // Selected icon and label
+  static const Color secondaryColor = Color(
+      0xFF86B2D8); // Hover/transition color
+  static const Color grayColor = Color(
+      0xFFE9ECED); // Unselected icons and labels
+  static const Color navBackgroundColor = Color(
+      0xFF11232C); // Background of the bottom navigation bar
+  static const Color darkColor = Colors.white; // White text
+  static const Color darkText = Colors.black; // Black text
+
 
   @override
   void initState() {
@@ -41,8 +56,9 @@ class _ClubDetailsPageState extends State<ClubDetailsPage> {
         _memberCount = members.length;
       });
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Error fetching member count: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error fetching member count: $e')),
+      );
     }
   }
 
@@ -57,7 +73,8 @@ class _ClubDetailsPageState extends State<ClubDetailsPage> {
       // Check if the user is the admin, prevent joining if true
       if (userId == adminId) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('You cannot join the club as you are the admin.')),
+          SnackBar(
+              content: Text('You cannot join the club as you are the admin.')),
         );
         return;
       }
@@ -70,7 +87,8 @@ class _ClubDetailsPageState extends State<ClubDetailsPage> {
         });
       } else {
         await _firestore.collection('allClubs').doc(clubId).update({
-          'members': FieldValue.arrayUnion([userId]), // Add the user to the 'members' array
+          'members': FieldValue.arrayUnion([userId]),
+          // Add the user to the 'members' array
         });
       }
 
@@ -104,7 +122,8 @@ class _ClubDetailsPageState extends State<ClubDetailsPage> {
             .collection('myClubs')
             .doc(clubId)
             .update({
-          'members': FieldValue.arrayUnion([userId]), // Add the user to the 'members' array
+          'members': FieldValue.arrayUnion([userId]),
+          // Add the user to the 'members' array
         });
       }
 
@@ -132,7 +151,8 @@ class _ClubDetailsPageState extends State<ClubDetailsPage> {
             .collection('collegeClubs')
             .doc(clubId)
             .update({
-          'members': FieldValue.arrayUnion([userId]), // Add the user to the 'members' array
+          'members': FieldValue.arrayUnion([userId]),
+          // Add the user to the 'members' array
         });
       }
 
@@ -166,7 +186,8 @@ class _ClubDetailsPageState extends State<ClubDetailsPage> {
             .collection('JoinedClubs')
             .doc('ids')
             .update({
-          'clubids': FieldValue.arrayUnion([clubId]), // Add the clubId to the 'clubids' array
+          'clubids': FieldValue.arrayUnion([clubId]),
+          // Add the clubId to the 'clubids' array
         });
       }
 
@@ -180,21 +201,24 @@ class _ClubDetailsPageState extends State<ClubDetailsPage> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFDFD),
       appBar: AppBar(
         title: Text(
           widget.clubDetails['name'] ?? 'Club Details',
-          style: const TextStyle(color: Color(0xFF050505)),
+          style: const TextStyle(
+              color: primaryColor, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: const Color(0xFFECE6E6),
+        backgroundColor: navBackgroundColor,
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
+      body: Container(
+        decoration: const BoxDecoration(
+          color: Color(0xFF0D1920),
+        ),
+        child: Column(  // Use Column instead of SingleChildScrollView
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildClubLogo(
@@ -215,44 +239,17 @@ class _ClubDetailsPageState extends State<ClubDetailsPage> {
               ),
             ),
             const SizedBox(height: 20),
-            if (_selectedTabIndex == 0) _buildAboutUsSection(),
-            if (_selectedTabIndex == 1)
-              EventsTab(
+            Expanded(  // Ensures content takes remaining space
+              child: _selectedTabIndex == 0
+                  ? _buildAboutUsSection()
+                  : _selectedTabIndex == 1
+                  ? EventsTab(
                 clubDetails: widget.clubDetails,
                 clubId: widget.clubDetails['id'],
-              ),
-            if (_selectedTabIndex == 2)
-              AnnouncementsTab(clubDetails: widget.clubDetails),
+              )
+                  : AnnouncementsTab(clubDetails: widget.clubDetails),
+            ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTabButton(int index, String label) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedTabIndex = index;
-        });
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        decoration: BoxDecoration(
-          color: _selectedTabIndex == index
-              ? const Color(0xFFA60000)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(25),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: _selectedTabIndex == index
-                ? Colors.white
-                : const Color(0xFFA60000),
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
         ),
       ),
     );
@@ -268,7 +265,8 @@ class _ClubDetailsPageState extends State<ClubDetailsPage> {
         children: [
           logoUrl != null && logoUrl.isNotEmpty
               ? Image.network(logoUrl, fit: BoxFit.cover)
-              : Image.asset('assets/images/default_club_logo.png', fit: BoxFit.cover),
+              : Image.asset(
+              'assets/images/default_club_logo.png', fit: BoxFit.cover),
           Positioned(
             left: 0,
             bottom: 0,
@@ -295,7 +293,11 @@ class _ClubDetailsPageState extends State<ClubDetailsPage> {
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   shadows: [
-                    Shadow(blurRadius: 10.0, color: Colors.black, offset: Offset(2.0, 2.0)),
+                    Shadow(
+                      blurRadius: 10.0,
+                      color: Colors.black,
+                      offset: Offset(2.0, 2.0),
+                    ),
                   ],
                 ),
               ),
@@ -306,96 +308,126 @@ class _ClubDetailsPageState extends State<ClubDetailsPage> {
     );
   }
 
-  Widget _buildAboutUsSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                widget.clubDetails['name'] ?? 'Unnamed Club',
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFFA60000),
-                ),
-              ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  const Icon(Icons.category, color: Color(0xFFA60000), size: 20),
-                  const SizedBox(width: 5),
-                  Text(
-                    widget.clubDetails['category'] ?? 'Uncategorized',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  const Icon(Icons.access_time, color: Color(0xFFA60000), size: 20),
-                  const SizedBox(width: 5),
-                  Text(
-                    'Established since ${_formatDate(widget.clubDetails['createdAt'])}',
-                    style: const TextStyle(fontSize: 16, color: Colors.black),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'Description ',
-                style: const TextStyle(fontSize: 18, color: Color(0xFFA60000), fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                widget.clubDetails['description'] ?? 'No description provided',
-                style: const TextStyle(fontSize: 16, color: Colors.black),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                '${widget.collegeCode} - ${widget.clubDetails['collegeName'] ?? ''}',
-                style: const TextStyle(fontSize: 16, color: Colors.black),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Members Countz : ${_memberCount ?? 0}',
-                style: const TextStyle(fontSize: 16, color: Colors.black),
-              ),
-            ],
+  Widget _buildTabButton(int index, String label) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedTabIndex = index;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        decoration: BoxDecoration(
+          color: _selectedTabIndex == index
+              ? const Color(0xFF0D6EC5)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(25),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: _selectedTabIndex == index
+                ? Colors.white
+                : const Color(0xFF0D6EC5),
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: 15),
-        _buildSectionHeader('Admin Information', const Color(0xFFA60000)),
-        const SizedBox(height: 16),
-        _buildAdminInfo(
-          widget.clubDetails['adminProfilePic'],
-          widget.clubDetails['adminName'],
-          widget.clubDetails['adminBranch'],
-          widget.clubDetails['adminRollNumber'],
-        ),
-        const SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: _joinClub,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFA60000),
-            padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 10),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+      ),
+    );
+  }
+
+  Widget _buildAboutUsSection() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildSectionHeader(
+                    widget.clubDetails['name'] ?? 'Unnamed Club',
+                    const Color(0xFF0D6EC5)),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    const Icon(Icons.category, color: secondaryColor, size: 20),
+                    const SizedBox(width: 5),
+                    Text(
+                      widget.clubDetails['category'] ?? 'Uncategorized',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        color: secondaryColor,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    const Icon(
+                        Icons.access_time, color: secondaryColor, size: 20),
+                    const SizedBox(width: 5),
+                    Text(
+                      'Established since ${_formatDate(
+                          widget.clubDetails['createdAt'])}',
+                      style: const TextStyle(
+                          fontSize: 16, color: secondaryColor),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                _buildSectionHeader('Description ', const Color(0xFF0D6EC5)),
+                const SizedBox(height: 4),
+                Text(
+                  widget.clubDetails['description'] ??
+                      'No description provided',
+                  style: const TextStyle(fontSize: 16, color: secondaryColor),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '${widget.collegeCode} ',
+                  style: const TextStyle(fontSize: 16, color: secondaryColor),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Club Members: ${_memberCount ?? 0}', // Fixed typo
+                  style: const TextStyle(fontSize: 16, color: secondaryColor),
+                ),
+              ],
             ),
           ),
-          child: const Text(
-            'Join Club',
-            style: TextStyle(fontSize: 18, color: Colors.white),
+          const SizedBox(height: 15),
+          _buildSectionHeader('Admin Information', const Color(0xFF0D6EC5)),
+          const SizedBox(height: 16),
+          _buildAdminInfo(
+            widget.clubDetails['adminProfilePic'],
+            widget.clubDetails['adminName'],
+            widget.clubDetails['adminBranch'],
+            widget.clubDetails['adminRollNumber'],
           ),
-        ),
-      ],
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: _joinClub,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF0D6EC5),
+              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+              // Adjusted padding for better button size
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: const Text(
+              'Join Club',
+              style: TextStyle(fontSize: 18, color: Colors.white),
+            ),
+          ),
+          const SizedBox(height: 20), // Added to ensure spacing at the bottom
+        ],
+      ),
     );
   }
 
@@ -416,18 +448,21 @@ class _ClubDetailsPageState extends State<ClubDetailsPage> {
         const SizedBox(width: 10),
         Text(
           title,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+          style: TextStyle(
+              fontSize: 18, fontWeight: FontWeight.bold, color: grayColor),
         ),
       ],
     );
   }
 
-  Widget _buildAdminInfo(String? profilePicUrl, String? name, String? branch, String? rollNumber) {
+  Widget _buildAdminInfo(String? profilePicUrl, String? name, String? branch,
+      String? rollNumber) {
     return Row(
       children: [
         CircleAvatar(
           radius: 40,
-          backgroundImage: NetworkImage(profilePicUrl ?? 'https://www.example.com/default_profile_pic.jpg'),
+          backgroundImage: NetworkImage(profilePicUrl ??
+              'https://www.example.com/default_profile_pic.jpg'),
         ),
         const SizedBox(width: 16),
         Column(
@@ -435,17 +470,17 @@ class _ClubDetailsPageState extends State<ClubDetailsPage> {
           children: [
             Text(
               name ?? 'Admin',
-              style: const TextStyle(fontSize: 18, color: Colors.black),
+              style: const TextStyle(fontSize: 18, color: secondaryColor),
             ),
             const SizedBox(height: 4),
             Text(
               'Branch: $branch',
-              style: const TextStyle(fontSize: 16, color: Colors.black),
+              style: const TextStyle(fontSize: 16, color: secondaryColor),
             ),
             const SizedBox(height: 4),
             Text(
               'Roll No: $rollNumber',
-              style: const TextStyle(fontSize: 16, color: Colors.black),
+              style: const TextStyle(fontSize: 16, color: secondaryColor),
             ),
           ],
         ),
